@@ -1,0 +1,23 @@
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up()
+    {
+        Schema::create('visits', function (Blueprint $table) {
+            $table->id();
+            $table->ipAddress('ip');          // varchar(45)
+            $table->date('visit_date');       // без времени
+            $table->timestamps();
+
+            $table->unique(['ip', 'visit_date']);
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('visits');
+    }
+};

@@ -1,0 +1,36 @@
+# Laravel
+/vendor
+/node_modules
+
+# Environment
+.env
+!.env.example
+
+# Laravel storage & cache
+/storage/*.key
+/storage/app/*
+/storage/framework/*
+/storage/logs/*
+/bootstrap/cache/*
+
+# Logs
+*.log
+
+# Build
+/public/build
+/public/hot
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Temp
+*.tmp
+*.bak
+
+# Custom
+/___promt_etc

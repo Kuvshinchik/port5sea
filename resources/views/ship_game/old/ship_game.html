@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Анимация теплохода - Маршрут Архангельск-Мурманск</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 20px;
+            background: #2c3e50;
+            font-family: Arial, sans-serif;
+        }
+        #game-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚢 Путешествие теплохода: Архангельск → Мурманск</h1>
+    <div id="game-container"></div>
+    
+    <script>
+        // Конфигурация игры
+        const config = {
+            type: Phaser.AUTO,
+            width: 1200,
+            height: 800,
+            backgroundColor: '#87CEEB',
+            parent: 'game-container',
+            scene: {
+                preload: preload,
+                create: create
+            }
+        };
+
+        const game = new Phaser.Game(config);
+
+        // Глобальные переменные
+        let ship;
+        let routePoints;
+        let currentPoint = 0;
+        let buttons;
+        let isMoving = false;
+        let stopNameText;
+
+        function preload() {
+            // Загружаем карту
+            this.load.image('map', 'map_01.png');
+            
+            // Загружаем спрайт теплохода
+            // Положи файл ship.png в ту же папку, что и этот HTML
+            this.load.image('ship', 'ship.png');
+        }
+
+        function create() {
+            // Добавляем карту как фон
+            const map = this.add.image(600, 400, 'map');
+            
+            // Масштабируем карту под размер экрана
+            const scaleX = 1200 / map.width;
+            const scaleY = 800 / map.height;
+            const scale = Math.max(scaleX, scaleY);
+            map.setScale(scale);
+
+            // Координаты точек маршрута
+            // ВАЖНО: Эти координаты примерные, подбери их под свою карту!
+            // Для этого раскомментируй код в конце функции create
+            routePoints = [
+                { x: 780, y: 500, isStop: true, name: "Архангельск", level: 1 },
+                { x: 730, y: 480, isStop: false },
+                { x: 680, y: 460, isStop: false },
+                { x: 650, y: 445, isStop: false },
+                { x: 620, y: 435, isStop: true, name: "Белое море", level: 2 },
+                { x: 590, y: 425, isStop: false },
+                { x: 560, y: 415, isStop: false },
+                { x: 530, y: 400, isStop: false },
+                { x: 510, y: 380, isStop: false },
+                { x: 500, y: 360, isStop: true, name: "Кандалакшский залив", level: 3 },
+                { x: 520, y: 340, isStop: false },
+                { x: 550, y: 330, isStop: false },
+                { x: 590, y: 325, isStop: false },
+                { x: 630, y: 320, isStop: false },
+                { x: 665, y: 318, isStop: true, name: "Мурманск", level: 4 }
+            ];
+
+            // Рисуем маршрут красной линией
+            const graphics = this.add.graphics();
+            graphics.lineStyle(4, 0xFF0000, 0.8);
+            graphics.beginPath();
+            graphics.moveTo(routePoints[0].x, routePoints[0].y);
+            routePoints.forEach(point => {
+                graphics.lineTo(point.x, point.y);
+            });
+            graphics.strokePath();
+
+            // Рисуем черные кружочки на остановках
+            routePoints.forEach(point => {
+                if (point.isStop) {
+                    graphics.fillStyle(0x000000, 1);
+                    graphics.fillCircle(point.x, point.y, 10);
+                    graphics.lineStyle(2, 0xFFFFFF, 1);
+                    graphics.strokeCircle(point.x, point.y, 10);
+                }
+            });
+
+            // Создаём теплоход из загруженного спрайта
+            ship = this.add.image(
+                routePoints[0].x, 
+                routePoints[0].y, 
+                'ship'
+            );
+            ship.setScale(0.4); // Масштабируем под размер карты
+            ship.setOrigin(0.5, 0.5);
+            
+            // Добавляем тень под корабль
+            const shadow = this.add.ellipse(
+                ship.x, 
+                ship.y + 15, 
+                60, 
+                20, 
+                0x000000, 
+                0.3
+            );
+            shadow.setDepth(-1);
+            
+            // Привязываем тень к кораблю
+            ship.shadow = shadow;
+
+            // Текст с названием остановки
+            stopNameText = this.add.text(600, 50, '', {
+                fontSize: '32px',
+                fontFamily: 'Arial',
+                color: '#ffffff',
+                backgroundColor: '#000000',
+                padding: { x: 20, y: 10 },
+                align: 'center'
+            });
+            stopNameText.setOrigin(0.5);
+            stopNameText.setVisible(false);
+
+            // Создаём группу кнопок
+            buttons = this.add.container(0, 0);
+            buttons.setVisible(false);
+
+            // Кнопка "Продолжить плавание"
+            const continueBtn = createButton(
+                this, 
+                600, 
+                400, 
+                '⛵ Продолжить плавание',
+                () => {
+                    stopNameText.setVisible(false);
+                    moveToNextPoint(this);
+                }
+            );
+
+            // Кнопка "Перейти к следующему уровню"
+            const levelBtn = createButton(
+                this, 
+                600, 
+                480, 
+                '🎮 Начать уровень',
+                () => startLevel(this)
+            );
+
+            buttons.add([continueBtn, levelBtn]);
+
+            // Инструкция для игрока
+            const instruction = this.add.text(600, 750, 
+                'Теплоход автоматически начнёт движение через 2 секунды...', {
+                fontSize: '18px',
+                fontFamily: 'Arial',
+                color: '#ffffff',
+                backgroundColor: '#34495e',
+                padding: { x: 15, y: 8 }
+            });
+            instruction.setOrigin(0.5);
+
+            // Автоматически начинаем движение
+            setTimeout(() => {
+                instruction.destroy();
+                moveToNextPoint(this);
+            }, 2000);
+
+            // РАСКОММЕНТИРУЙ ЭТИ СТРОКИ, ЧТОБЫ УЗНАТЬ КООРДИНАТЫ ТОЧЕК НА КАРТЕ
+            // Кликай по карте и смотри координаты в консоли браузера (F12)
+            /*
+            this.input.on('pointerdown', (pointer) => {
+                console.log(`{ x: ${Math.round(pointer.x)}, y: ${Math.round(pointer.y)}, isStop: true, name: "Название" },`);
+            });
+            */
+        }
+
+        // Функция создания красивой кнопки
+        function createButton(scene, x, y, text, callback) {
+            const button = scene.add.container(x, y);
+
+            // Фон кнопки с градиентом
+            const bg = scene.add.rectangle(0, 0, 350, 60, 0x3498db);
+            bg.setStrokeStyle(3, 0x2980b9);
+
+            // Тень кнопки
+            const shadow = scene.add.rectangle(3, 3, 350, 60, 0x000000, 0.3);
+
+            // Текст кнопки
+            const label = scene.add.text(0, 0, text, {
+                fontSize: '22px',
+                color: '#ffffff',
+                fontFamily: 'Arial',
+                fontStyle: 'bold'
+            });
+            label.setOrigin(0.5);
+
+            button.add([shadow, bg, label]);
+
+            // Интерактивность
+            bg.setInteractive({ useHandCursor: true })
+                .on('pointerover', () => {
+                    bg.setFillStyle(0x2980b9);
+                    scene.tweens.add({
+                        targets: button,
+                        scaleX: 1.05,
+                        scaleY: 1.05,
+                        duration: 100
+                    });
+                })
+                .on('pointerout', () => {
+                    bg.setFillStyle(0x3498db);
+                    scene.tweens.add({
+                        targets: button,
+                        scaleX: 1,
+                        scaleY: 1,
+                        duration: 100
+                    });
+                })
+                .on('pointerdown', () => {
+                    scene.tweens.add({
+                        targets: button,
+                        scaleX: 0.95,
+                        scaleY: 0.95,
+                        duration: 50,
+                        yoyo: true,
+                        onComplete: callback
+                    });
+                });
+
+            return button;
+        }
+
+        // Функция движения к следующей точке
+        function moveToNextPoint(scene) {
+            if (isMoving) return;
+            
+            buttons.setVisible(false);
+            currentPoint++;
+
+            if (currentPoint >= routePoints.length) {
+                // Маршрут завершён!
+                const endText = scene.add.text(600, 400, 
+                    '🎉 Поздравляем!\nМаршрут Архангельск-Мурманск пройден!', {
+                    fontSize: '36px',
+                    fontFamily: 'Arial',
+                    color: '#ffffff',
+                    backgroundColor: '#27ae60',
+                    padding: { x: 30, y: 20 },
+                    align: 'center'
+                });
+                endText.setOrigin(0.5);
+                return;
+            }
+
+            isMoving = true;
+            const nextPoint = routePoints[currentPoint];
+
+            // Рассчитываем расстояние и угол поворота
+            const distance = Phaser.Math.Distance.Between(
+                ship.x, ship.y,
+                nextPoint.x, nextPoint.y
+            );
+            
+            // Поворачиваем корабль по направлению движения
+            const angle = Phaser.Math.Angle.Between(
+                ship.x, ship.y,
+                nextPoint.x, nextPoint.y
+            );
+            
+            scene.tweens.add({
+                targets: ship,
+                rotation: angle,
+                duration: 300,
+                ease: 'Power2'
+            });
+
+            const duration = distance * 8; // Скорость движения
+
+            // Анимация движения корабля
+            scene.tweens.add({
+                targets: ship,
+                x: nextPoint.x,
+                y: nextPoint.y,
+                duration: duration,
+                ease: 'Sine.easeInOut',
+                onUpdate: () => {
+                    // Двигаем тень вместе с кораблём
+                    ship.shadow.x = ship.x;
+                    ship.shadow.y = ship.y + 15;
+                },
+                onComplete: () => {
+                    isMoving = false;
+                    
+                    if (nextPoint.isStop) {
+                        showButtons(scene, nextPoint);
+                    } else {
+                        // Продолжаем движение
+                        setTimeout(() => moveToNextPoint(scene), 200);
+                    }
+                }
+            });
+
+            // Эффект волн за кораблём
+            if (currentPoint % 2 === 0) {
+                const wave = scene.add.ellipse(
+                    ship.x, 
+                    ship.y, 
+                    30, 
+                    15, 
+                    0x4FC3F7, 
+                    0.5
+                );
+                scene.tweens.add({
+                    targets: wave,
+                    scaleX: 2,
+                    scaleY: 2,
+                    alpha: 0,
+                    duration: 1000,
+                    onComplete: () => wave.destroy()
+                });
+            }
+        }
+
+        // Показываем кнопки на остановке
+        function showButtons(scene, point) {
+            console.log('🛑 Остановка:', point.name);
+            
+            // Показываем название остановки
+            stopNameText.setText(`📍 ${point.name}`);
+            stopNameText.setVisible(true);
+            
+            // Анимация появления названия
+            stopNameText.setAlpha(0);
+            stopNameText.setScale(0.8);
+            scene.tweens.add({
+                targets: stopNameText,
+                alpha: 1,
+                scaleX: 1,
+                scaleY: 1,
+                duration: 400,
+                ease: 'Back.easeOut'
+            });
+
+            buttons.setVisible(true);
+
+            // Анимация появления кнопок
+            buttons.setAlpha(0);
+            buttons.setScale(0.8);
+            scene.tweens.add({
+                targets: buttons,
+                alpha: 1,
+                scaleX: 1,
+                scaleY: 1,
+                duration: 400,
+                ease: 'Back.easeOut'
+            });
+        }
+
+        // Функция запуска уровня игры
+        function startLevel(scene) {
+            const currentStop = routePoints[currentPoint];
+            console.log('🎮 Запуск уровня:', currentStop.level, '-', currentStop.name);
+            
+            // Здесь будет переход к игровому уровню
+            // Например: scene.scene.start('Level' + currentStop.level);
+            
+            // Пока просто показываем сообщение
+            const levelText = scene.add.text(600, 300, 
+                `🎮 Уровень ${currentStop.level}\n"${currentStop.name}"\n\nЗдесь будет игровой уровень!`, {
+                fontSize: '28px',
+                fontFamily: 'Arial',
+                color: '#ffffff',
+                backgroundColor: '#e74c3c',
+                padding: { x: 30, y: 20 },
+                align: 'center'
+            });
+            levelText.setOrigin(0.5);
+            
+            // Закрываем через 3 секунды
+            setTimeout(() => {
+                levelText.destroy();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

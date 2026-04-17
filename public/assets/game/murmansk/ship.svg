@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" width="200" height="120">
+  <!-- Волны под кораблём -->
+  <path d="M 0,95 Q 10,90 20,95 T 40,95 T 60,95 T 80,95 T 100,95 T 120,95 T 140,95 T 160,95 T 180,95 T 200,95" 
+        fill="none" stroke="#4FC3F7" stroke-width="2" opacity="0.6"/>
+  <path d="M 0,100 Q 10,95 20,100 T 40,100 T 60,100 T 80,100 T 100,100 T 120,100 T 140,100 T 160,100 T 180,100 T 200,100" 
+        fill="none" stroke="#4FC3F7" stroke-width="2" opacity="0.4"/>
+  
+  <!-- Тень корабля в воде -->
+  <ellipse cx="100" cy="95" rx="50" ry="8" fill="#1565C0" opacity="0.3"/>
+  
+  <!-- Корпус корабля (нижняя часть) -->
+  <path d="M 40,85 L 30,92 L 170,92 L 160,85 Z" fill="#E53935" stroke="#B71C1C" stroke-width="2"/>
+  
+  <!-- Корпус корабля (верхняя палуба) -->
+  <rect x="35" y="60" width="130" height="25" fill="#EF5350" stroke="#B71C1C" stroke-width="2" rx="2"/>
+  
+  <!-- Надстройка (рубка) -->
+  <rect x="60" y="35" width="80" height="25" fill="#FFECB3" stroke="#F57C00" stroke-width="2" rx="2"/>
+  
+  <!-- Крыша рубки -->
+  <path d="M 55,35 L 60,30 L 140,30 L 145,35 Z" fill="#FFD54F" stroke="#F57C00" stroke-width="2"/>
+  
+  <!-- Труба (дымоход) 1 -->
+  <rect x="75" y="15" width="12" height="20" fill="#424242" stroke="#212121" stroke-width="1.5" rx="1"/>
+  <rect x="75" y="15" width="12" height="4" fill="#EF5350" stroke="#B71C1C" stroke-width="1"/>
+  
+  <!-- Труба (дымоход) 2 -->
+  <rect x="113" y="15" width="12" height="20" fill="#424242" stroke="#212121" stroke-width="1.5" rx="1"/>
+  <rect x="113" y="15" width="12" height="4" fill="#EF5350" stroke="#B71C1C" stroke-width="1"/>
+  
+  <!-- Дым из труб -->
+  <ellipse cx="81" cy="10" rx="8" ry="5" fill="#90A4AE" opacity="0.5"/>
+  <ellipse cx="78" cy="6" rx="6" ry="4" fill="#B0BEC5" opacity="0.4"/>
+  <ellipse cx="119" cy="10" rx="8" ry="5" fill="#90A4AE" opacity="0.5"/>
+  <ellipse cx="122" cy="6" rx="6" ry="4" fill="#B0BEC5" opacity="0.4"/>
+  
+  <!-- Окна рубки -->
+  <rect x="70" y="40" width="10" height="12" fill="#81D4FA" stroke="#0277BD" stroke-width="1" rx="1"/>
+  <rect x="85" y="40" width="10" height="12" fill="#81D4FA" stroke="#0277BD" stroke-width="1" rx="1"/>
+  <rect x="100" y="40" width="10" height="12" fill="#81D4FA" stroke="#0277BD" stroke-width="1" rx="1"/>
+  <rect x="115" y="40" width="10" height="12" fill="#81D4FA" stroke="#0277BD" stroke-width="1" rx="1"/>
+  
+  <!-- Иллюминаторы на корпусе -->
+  <circle cx="50" cy="72" r="4" fill="#4FC3F7" stroke="#0277BD" stroke-width="1"/>
+  <circle cx="70" cy="72" r="4" fill="#4FC3F7" stroke="#0277BD" stroke-width="1"/>
+  <circle cx="90" cy="72" r="4" fill="#4FC3F7" stroke="#0277BD" stroke-width="1"/>
+  <circle cx="110" cy="72" r="4" fill="#4FC3F7" stroke="#0277BD" stroke-width="1"/>
+  <circle cx="130" cy="72" r="4" fill="#4FC3F7" stroke="#0277BD" stroke-width="1"/>
+  <circle cx="150" cy="72" r="4" fill="#4FC3F7" stroke="#0277BD" stroke-width="1"/>
+  
+  <!-- Якорь (декоративный элемент спереди) -->
+  <path d="M 35,75 L 35,82 M 32,79 L 38,79 M 35,82 L 32,85 M 35,82 L 38,85" 
+        stroke="#424242" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Флаг на крыше -->
+  <line x1="145" y1="30" x2="145" y2="18" stroke="#424242" stroke-width="1.5"/>
+  <path d="M 145,18 L 158,21 L 145,24 Z" fill="#FF1744"/>
+  
+  <!-- Спасательный круг -->
+  <circle cx="155" cy="72" r="5" fill="#FF6F00" stroke="#E65100" stroke-width="1.5"/>
+  <circle cx="155" cy="72" r="3" fill="none" stroke="#FFF" stroke-width="1"/>
+</svg>

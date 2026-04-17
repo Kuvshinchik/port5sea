@@ -1,0 +1,1679 @@
+<!DOCTYPE html> <!-- Объявление типа документа HTML5 -->
+<html lang="ru"> <!-- Открытие HTML документа с указанием русского языка -->
+<head> <!-- Начало раздела метаданных -->
+    <meta charset="UTF-8"> <!-- Установка кодировки UTF-8 для корректного отображения кириллицы -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Настройка отображения на мобильных устройствах -->
+    <title>🚢 Порт Мурманск - Подготовка экспедиции</title> <!-- Заголовок страницы в браузере -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script> <!-- Подключение библиотеки Phaser.js для создания игры -->
+    <style> <!-- Начало блока CSS стилей -->
+        @import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Nunito:wght@400;600;700;800&display=swap'); 
+        /* Импорт шрифтов Russo One и Nunito из Google Fonts */
+        
+        * { /* Применение стилей ко всем элементам */
+            margin: 0; /* Обнуление внешних отступов */
+            padding: 0; /* Обнуление внутренних отступов */
+            box-sizing: border-box; /* Включение границ и отступов в общую ширину элемента */
+        }
+        
+        body { /* Стили для тела документа */
+            background: linear-gradient(135deg, #1a2a3a 0%, #0d1b2a 50%, #1b263b 100%); 
+            /* Градиентный фон с темно-синими оттенками */
+            min-height: 100vh; /* Минимальная высота на весь экран */
+            display: flex; /* Использование flexbox для размещения элементов */
+            flex-direction: column; /* Вертикальное направление размещения */
+            align-items: center; /* Центрирование по горизонтали */
+            justify-content: center; /* Центрирование по вертикали */
+            font-family: 'Nunito', sans-serif; /* Установка основного шрифта */
+            padding: 20px; /* Внутренние отступы */
+        }
+        
+        h1 { /* Стили для главного заголовка */
+            font-family: 'Russo One', sans-serif; /* Использование шрифта Russo One */
+            color: #4fc3f7; /* Голубой цвет текста */
+            text-align: center; /* Центрирование текста */
+            margin-bottom: 20px; /* Отступ снизу */
+            font-size: 2rem; /* Размер шрифта 32px */
+            text-shadow: 0 2px 10px rgba(79, 195, 247, 0.3); /* Голубое свечение вокруг текста */
+            letter-spacing: 2px; /* Увеличенное расстояние между буквами */
+        }
+        
+        #game-container { /* Стили для контейнера игры */
+            border-radius: 16px; /* Закругленные углы */
+            overflow: hidden; /* Скрытие выходящего за границы содержимого */
+            box-shadow: 
+                0 0 60px rgba(79, 195, 247, 0.2), /* Внешнее голубое свечение */
+                0 20px 40px rgba(0, 0, 0, 0.4), /* Темная тень снизу */
+                inset 0 0 1px rgba(255, 255, 255, 0.1); /* Внутренняя светлая граница */
+        }
+        
+        .instructions { /* Стили для блока инструкций */
+            max-width: 1200px; /* Максимальная ширина */
+            margin-top: 20px; /* Отступ сверху */
+            background: rgba(255, 255, 255, 0.05); /* Полупрозрачный белый фон */
+            border: 1px solid rgba(79, 195, 247, 0.2); /* Голубая полупрозрачная граница */
+            border-radius: 12px; /* Закругленные углы */
+            padding: 20px 30px; /* Внутренние отступы */
+            color: #b0bec5; /* Светло-серый цвет текста */
+            text-align: center; /* Центрирование текста */
+        }
+        
+        .instructions h3 { /* Стили для заголовка в инструкциях */
+            color: #4fc3f7; /* Голубой цвет */
+            margin-bottom: 10px; /* Отступ снизу */
+            font-family: 'Russo One', sans-serif; /* Использование шрифта Russo One */
+        }
+        
+        .instructions p { /* Стили для параграфов в инструкциях */
+            line-height: 1.6; /* Межстрочный интервал */
+        }
+        
+        .key { /* Стили для обозначения клавиш в тексте */
+            display: inline-block; /* Отображение как строчно-блочный элемент */
+            background: rgba(79, 195, 247, 0.2); /* Полупрозрачный голубой фон */
+            border: 1px solid rgba(79, 195, 247, 0.4); /* Голубая граница */
+            border-radius: 6px; /* Закругленные углы */
+            padding: 2px 8px; /* Внутренние отступы */
+            margin: 0 4px; /* Внешние отступы по бокам */
+            font-weight: 600; /* Полужирный шрифт */
+            color: #4fc3f7; /* Голубой цвет текста */
+        }
+    </style> <!-- Конец блока стилей -->
+</head>
+<body> <!-- Начало тела документа -->
+    <h1>⚓ ПОРТ МУРМАНСК — ПОДГОТОВКА ЭКСПЕДИЦИИ</h1> <!-- Главный заголовок страницы -->
+    <div id="game-container"></div> <!-- Контейнер, в который будет загружена игра Phaser -->
+    <div class="instructions"> <!-- Блок с инструкциями для игрока -->
+        <h3>🎮 Как играть</h3> <!-- Подзаголовок инструкций -->
+        <p> <!-- Текст инструкций -->
+            Кликайте по зданиям порта, чтобы нанять команду, купить снаряжение и продовольствие. 
+            Возьмите подработку на <span class="key">Доске объявлений</span>, чтобы заработать дополнительные деньги.
+            Когда будете готовы — нажмите <span class="key">Отправиться в путь</span> на корабле!
+        </p>
+    </div>
+
+    <script> <!-- Начало блока JavaScript кода -->
+// ═══════════════════════════════════════════════════════════════════════════
+// ДАННЫЕ ИГРЫ - содержит все игровые данные (экипаж, снаряжение, задания)
+// ═══════════════════════════════════════════════════════════════════════════
+
+const GAME_DATA = { // Объект с константными данными игры
+    // Начальные ресурсы игрока
+    initialMoney: 250000, // Стартовый бюджет в рублях
+    minCrewRequired: 6, // Минимальное количество членов экипажа для отплытия
+    maxCrew: 12, // Максимальное количество членов экипажа
+    maxCargoCapacity: 100, // Максимальная вместимость груза в килограммах
+    
+    // Члены экипажа для найма - массив объектов с данными о каждом члене экипажа
+    crew: [
+        { // Данные о капитане
+            id: 'captain', // Уникальный идентификатор
+            name: 'Иван Северов', // Имя персонажа
+            role: 'Капитан', // Должность
+            roleIcon: '👨‍✈️', // Эмодзи для визуализации
+            salary: 2000, // Зарплата за рейс
+            skill: 3, // Уровень навыка (1-3)
+            trait: 'Опытный навигатор', // Особая черта
+            traitEffect: '+20% к скорости во льдах', // Эффект особой черты
+            quote: 'Я проведу наш корабль через любые льды!', // Цитата персонажа
+            hired: false, // Нанят ли персонаж (изначально нет)
+            required: true, // Обязателен ли для экспедиции
+            portrait: '#3498db' // Цвет портрета (шестнадцатеричный код)
+        },
+        { // Данные о первом механике
+            id: 'mechanic1',
+            name: 'Пётр Гаечкин',
+            role: 'Механик',
+            roleIcon: '🔧',
+            salary: 1500,
+            skill: 3,
+            trait: 'Экономит топливо',
+            traitEffect: '-15% расход топлива',
+            quote: 'Я умею чинить двигатель прямо во льдах!',
+            hired: false,
+            required: true,
+            portrait: '#e67e22'
+        },
+        { // Данные о втором механике (необязательный)
+            id: 'mechanic2',
+            name: 'Анна Болтова',
+            role: 'Механик',
+            roleIcon: '🔧',
+            salary: 1200,
+            skill: 2,
+            trait: 'Быстрый ремонт',
+            traitEffect: '-30% время ремонта',
+            quote: 'Дайте мне гаечный ключ — и корабль будет как новый!',
+            hired: false,
+            required: false,
+            portrait: '#9b59b6'
+        },
+        { // Данные о враче
+            id: 'doctor',
+            name: 'Елена Айболитова',
+            role: 'Врач',
+            roleIcon: '👨‍⚕️',
+            salary: 1800,
+            skill: 3,
+            trait: 'Профилактика болезней',
+            traitEffect: '-50% шанс болезней',
+            quote: 'Здоровье команды — моя главная забота!',
+            hired: false,
+            required: true,
+            portrait: '#1abc9c'
+        },
+        { // Данные о коке (повар на корабле)
+            id: 'cook',
+            name: 'Борис Поваров',
+            role: 'Кок',
+            roleIcon: '👨‍🍳',
+            salary: 1000,
+            skill: 2,
+            trait: 'Экономная готовка',
+            traitEffect: '-20% расход еды',
+            quote: 'Накормлю всю команду так, что пальчики оближете!',
+            hired: false,
+            required: true,
+            portrait: '#f39c12'
+        },
+        { // Данные о штурмане
+            id: 'navigator',
+            name: 'Ольга Компасова',
+            role: 'Штурман',
+            roleIcon: '🧭',
+            salary: 1400,
+            skill: 2,
+            trait: 'Знание маршрутов',
+            traitEffect: '+15% к навигации',
+            quote: 'Северный морской путь — моя вторая родина!',
+            hired: false,
+            required: true,
+            portrait: '#e74c3c'
+        },
+        { // Данные о радисте
+            id: 'radioman',
+            name: 'Сергей Волнов',
+            role: 'Радист',
+            roleIcon: '📻',
+            salary: 1100,
+            skill: 2,
+            trait: 'Связь с берегом',
+            traitEffect: '+погодные предупреждения',
+            quote: 'Всегда на связи, в любую погоду!',
+            hired: false,
+            required: true,
+            portrait: '#2980b9'
+        },
+        { // Данные о первом матросе (необязательный)
+            id: 'sailor1',
+            name: 'Николай Морской',
+            role: 'Матрос',
+            roleIcon: '⚓',
+            salary: 800,
+            skill: 1,
+            trait: 'Крепкий здоровьем',
+            traitEffect: '+устойчивость к холоду',
+            quote: 'Готов к любой работе на палубе!',
+            hired: false,
+            required: false,
+            portrait: '#34495e'
+        },
+        { // Данные о второй матросе (необязательный)
+            id: 'sailor2',
+            name: 'Мария Якорева',
+            role: 'Матрос',
+            roleIcon: '⚓',
+            salary: 800,
+            skill: 2,
+            trait: 'Ловкая',
+            traitEffect: '+скорость при швартовке',
+            quote: 'Женщина на корабле — к удаче!',
+            hired: false,
+            required: false,
+            portrait: '#8e44ad'
+        },
+        { // Данные о третьем матросе (необязательный, с негативной чертой)
+            id: 'sailor3',
+            name: 'Алексей Канатов',
+            role: 'Матрос',
+            roleIcon: '⚓',
+            salary: 700,
+            skill: 1,
+            trait: 'Боится льдов',
+            traitEffect: '-настроение во льдах',
+            quote: 'Надеюсь, льдов будет не слишком много...',
+            hired: false,
+            required: false,
+            portrait: '#7f8c8d'
+        },
+        { // Данные об ученом (необязательный)
+            id: 'scientist',
+            name: 'Виктор Наукин',
+            role: 'Учёный',
+            roleIcon: '🔬',
+            salary: 1600,
+            skill: 3,
+            trait: 'Исследователь',
+            traitEffect: '+бонусы за открытия',
+            quote: 'Каждая экспедиция — это новые открытия!',
+            hired: false,
+            required: false,
+            portrait: '#16a085'
+        },
+        { // Данные о водолазе (необязательный)
+            id: 'diver',
+            name: 'Дмитрий Глубинов',
+            role: 'Водолаз',
+            roleIcon: '🤿',
+            salary: 1300,
+            skill: 2,
+            trait: 'Спасатель',
+            traitEffect: '+шанс спасения груза',
+            quote: 'Если что-то упадёт за борт — я достану!',
+            hired: false,
+            required: false,
+            portrait: '#3498db'
+        }
+    ],
+    
+    // Снаряжение для покупки - массив объектов с доступным снаряжением
+    equipment: [
+        { // Ледовая защита для корпуса
+            id: 'ice_armor',
+            name: 'Ледовая защита',
+            icon: '🛡️',
+            price: 150000,
+            description: 'Усиленная обшивка корпуса для прохождения сквозь льды',
+            effect: '+50% защита от повреждений',
+            category: 'защита',
+            owned: false
+        },
+        { // Дополнительный топливный бак
+            id: 'extra_fuel',
+            name: 'Дополнительный бак',
+            icon: '⛽',
+            price: 80000,
+            description: 'Увеличенная ёмкость для топлива',
+            effect: '+50% дальность плавания',
+            category: 'топливо',
+            owned: false
+        },
+        { // Радар для обнаружения льда
+            id: 'ice_radar',
+            name: 'Ледовый радар',
+            icon: '📡',
+            price: 100000,
+            description: 'Современная система обнаружения айсбергов',
+            effect: '+раннее предупреждение об опасности',
+            category: 'навигация',
+            owned: false
+        },
+        { // Спасательное снаряжение
+            id: 'rescue_gear',
+            name: 'Спасательное снаряжение',
+            icon: '🚨',
+            price: 50000,
+            description: 'Шлюпки, жилеты и сигнальные ракеты',
+            effect: '+выживаемость экипажа',
+            category: 'безопасность',
+            owned: false
+        },
+        { // Улучшенная радиостанция
+            id: 'radio_upgrade',
+            name: 'Мощная радиостанция',
+            icon: '📻',
+            price: 60000,
+            description: 'Связь на большие расстояния',
+            effect: '+дальность связи с берегом',
+            category: 'связь',
+            owned: false
+        },
+        { // Научное оборудование
+            id: 'science_lab',
+            name: 'Научное оборудование',
+            icon: '🔬',
+            price: 120000,
+            description: 'Лабораторные приборы для исследований',
+            effect: '+бонусы за научные открытия',
+            category: 'наука',
+            owned: false
+        },
+        { // Улучшенные двигатели
+            id: 'engine_boost',
+            name: 'Турбонаддув',
+            icon: '⚡',
+            price: 90000,
+            description: 'Увеличение мощности двигателя',
+            effect: '+30% скорость',
+            category: 'двигатель',
+            owned: false
+        },
+        { // Рыболовные сети
+            id: 'fishing_nets',
+            name: 'Рыболовные снасти',
+            icon: '🎣',
+            price: 40000,
+            description: 'Профессиональное оборудование для ловли рыбы',
+            effect: '+пополнение запасов еды',
+            category: 'провизия',
+            owned: false
+        }
+    ],
+    
+    // Типы продовольствия - массив объектов с продуктами питания
+    food: [
+        { // Консервы
+            id: 'canned_food',
+            name: 'Консервы',
+            icon: '🥫',
+            pricePerDay: 500,
+            description: 'Мясные и рыбные консервы',
+            quality: 2
+        },
+        { // Сухой паек
+            id: 'dry_rations',
+            name: 'Сухой паёк',
+            icon: '📦',
+            pricePerDay: 300,
+            description: 'Долгохранящиеся сухие пайки',
+            quality: 1
+        },
+        { // Свежие продукты
+            id: 'fresh_food',
+            name: 'Свежие продукты',
+            icon: '🍖',
+            pricePerDay: 800,
+            description: 'Свежие мясо, овощи, хлеб',
+            quality: 3
+        }
+    ],
+    
+    // Подработки/задания - массив объектов с доступными заданиями
+    jobs: [
+        { // Доставка груза в Диксон
+            id: 'job_1',
+            title: 'Доставка груза в Диксон',
+            icon: '📦',
+            description: 'Привезти научное оборудование в Диксон',
+            reward: 50000,
+            cargoWeight: 20,
+            risk: 1,
+            difficulty: 'Лёгкая'
+        },
+        { // Спасательная операция
+            id: 'job_2',
+            title: 'Спасательная операция',
+            icon: '🚨',
+            description: 'Эвакуировать застрявшую во льдах команду',
+            reward: 100000,
+            cargoWeight: 0,
+            risk: 3,
+            difficulty: 'Опасная'
+        },
+        { // Научная экспедиция
+            id: 'job_3',
+            title: 'Научная экспедиция',
+            icon: '🔬',
+            description: 'Помочь учёным собрать пробы льда',
+            reward: 70000,
+            cargoWeight: 15,
+            risk: 2,
+            difficulty: 'Средняя'
+        },
+        { // Доставка почты
+            id: 'job_4',
+            title: 'Доставка почты на полярные станции',
+            icon: '📬',
+            description: 'Отвезти почту и посылки на 3 станции',
+            reward: 40000,
+            cargoWeight: 10,
+            risk: 1,
+            difficulty: 'Лёгкая'
+        },
+        { // Транспортировка топлива
+            id: 'job_5',
+            title: 'Транспортировка топлива',
+            icon: '⛽',
+            description: 'Доставить дизельное топливо для генераторов',
+            reward: 80000,
+            cargoWeight: 35,
+            risk: 2,
+            difficulty: 'Средняя'
+        },
+        { // Вывоз мусора
+            id: 'job_6',
+            title: 'Вывоз отходов',
+            icon: '♻️',
+            description: 'Забрать накопившийся мусор со станции',
+            reward: 30000,
+            cargoWeight: 25,
+            risk: 1,
+            difficulty: 'Лёгкая'
+        },
+        { // Поиск пропавших
+            id: 'job_7',
+            title: 'Поиск пропавших',
+            icon: '🔍',
+            description: 'Найти пропавшую экспедицию',
+            reward: 150000,
+            cargoWeight: 0,
+            risk: 3,
+            difficulty: 'Очень опасная'
+        },
+        { // Ремонт маяка
+            id: 'job_8',
+            title: 'Ремонт навигационного маяка',
+            icon: '🏮',
+            description: 'Доставить запчасти и помочь с ремонтом',
+            reward: 60000,
+            cargoWeight: 18,
+            risk: 2,
+            difficulty: 'Средняя'
+        }
+    ]
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// СОСТОЯНИЕ ИГРЫ - хранит текущее состояние игрока и его ресурсов
+// ═══════════════════════════════════════════════════════════════════════════
+
+let gameState = { // Объект с изменяемым состоянием игры
+    money: GAME_DATA.initialMoney, // Текущее количество денег
+    crew: [], // Массив ID нанятых членов экипажа
+    equipment: [], // Массив ID купленного снаряжения
+    foodDays: 0, // Количество дней продовольствия
+    selectedFoodType: null, // Выбранный тип продовольствия
+    jobs: [], // Массив ID принятых заданий
+    cargoUsed: 0, // Использованная вместимость груза
+    morale: 100 // Мораль экипажа (0-100)
+};
+
+let currentModal = null; // Переменная для хранения текущего открытого модального окна
+
+// ═══════════════════════════════════════════════════════════════════════════
+// КОНФИГУРАЦИЯ PHASER - настройка игрового движка
+// ═══════════════════════════════════════════════════════════════════════════
+
+const config = { // Объект конфигурации Phaser
+    type: Phaser.AUTO, // Автоматический выбор рендерера (WebGL или Canvas)
+    width: 1200, // Ширина игрового поля в пикселях
+    height: 800, // Высота игрового поля в пикселях
+    parent: 'game-container', // ID HTML элемента, в который будет встроена игра
+    backgroundColor: '#0d1b2a', // Цвет фона игры
+    scene: { // Объект сцены игры
+        create: create, // Функция, вызываемая при создании сцены
+        update: update // Функция, вызываемая каждый кадр
+    }
+};
+
+const game = new Phaser.Game(config); // Создание экземпляра игры Phaser
+
+// ═══════════════════════════════════════════════════════════════════════════
+// СОЗДАНИЕ СЦЕНЫ - инициализация всех игровых объектов
+// ═══════════════════════════════════════════════════════════════════════════
+
+function create() { // Функция создания игровой сцены
+    const scene = this; // Сохранение контекста сцены для использования в других функциях
+    
+    // ═══════════════════════════════════════════════════════════════════════
+    // ФОН - создание фонового изображения
+    // ═══════════════════════════════════════════════════════════════════════
+    
+    // Создание фонового прямоугольника с градиентом
+    const bg = scene.add.graphics(); // Создание графического объекта
+    bg.fillGradientStyle(0x1a2a3a, 0x1a2a3a, 0x0d1b2a, 0x1b263b, 1); // Установка градиента
+    bg.fillRect(0, 0, 1200, 800); // Рисование прямоугольника
+    
+    // Добавление эффекта воды (волны)
+    for (let i = 0; i < 5; i++) { // Цикл для создания 5 волн
+        const wave = scene.add.graphics(); // Создание графического объекта для волны
+        wave.lineStyle(2, 0x2c3e50, 0.3); // Установка стиля линии (толщина, цвет, прозрачность)
+        wave.beginPath(); // Начало пути для рисования
+        wave.moveTo(0, 650 + i * 30); // Перемещение к начальной точке
+        
+        for (let x = 0; x < 1200; x += 50) { // Цикл для создания волнообразной формы
+            wave.lineTo(x, 650 + i * 30 + Math.sin(x * 0.02) * 10); // Рисование линии с синусоидальным изгибом
+        }
+        
+        wave.strokePath(); // Отрисовка пути
+        
+        // Анимация волны (движение вверх-вниз)
+        scene.tweens.add({ // Создание анимации
+            targets: wave, // Объект для анимации
+            y: -5, // Конечное значение Y координаты
+            duration: 2000 + i * 500, // Длительность анимации в миллисекундах
+            yoyo: true, // Возврат к исходному значению
+            repeat: -1, // Бесконечное повторение
+            ease: 'Sine.easeInOut' // Функция плавности анимации
+        });
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════════
+    // ЗДАНИЯ ПОРТА - создание интерактивных зданий
+    // ═══════════════════════════════════════════════════════════════════════
+    
+    // Позиции зданий на экране
+    const buildingPositions = [ // Массив с координатами зданий
+        { x: 200, y: 350, width: 180, height: 200, color: 0x3498db, label: '👥 НАБОР\nЭКИПАЖА', action: () => openCrewModal(scene) },
+        { x: 420, y: 330, width: 180, height: 220, color: 0xe67e22, label: '🛠️ СНАРЯЖЕНИЕ\nИ ЭКИПИРОВКА', action: () => openEquipmentModal(scene) },
+        { x: 640, y: 360, width: 180, height: 190, color: 0x27ae60, label: '🍞 ПРОДУКТЫ\nПИТАНИЯ', action: () => openFoodModal(scene) },
+        { x: 860, y: 340, width: 180, height: 210, color: 0x9b59b6, label: '📋 ДОСКА\nОБЪЯВЛЕНИЙ', action: () => openJobsModal(scene) }
+    ];
+    
+    buildingPositions.forEach(building => { // Цикл по каждому зданию
+        const container = scene.add.container(building.x, building.y); // Создание контейнера для здания
+        
+        // Тень здания
+        const shadow = scene.add.graphics(); // Создание графического объекта для тени
+        shadow.fillStyle(0x000000, 0.3); // Установка цвета и прозрачности
+        shadow.fillRoundedRect(5, 5, building.width, building.height, 15); // Рисование закругленного прямоугольника для тени
+        container.add(shadow); // Добавление тени в контейнер
+        
+        // Основное здание
+        const buildingRect = scene.add.graphics(); // Создание графического объекта для здания
+        buildingRect.fillStyle(building.color, 1); // Установка цвета здания
+        buildingRect.fillRoundedRect(0, 0, building.width, building.height, 15); // Рисование здания
+        buildingRect.lineStyle(3, darkenColor(building.color, 30), 1); // Установка границы здания
+        buildingRect.strokeRoundedRect(0, 0, building.width, building.height, 15); // Отрисовка границы
+        container.add(buildingRect); // Добавление здания в контейнер
+        
+        // Окна на здании
+        for (let row = 0; row < 3; row++) { // Цикл по рядам окон
+            for (let col = 0; col < 2; col++) { // Цикл по колонкам окон
+                const window = scene.add.graphics(); // Создание графического объекта для окна
+                window.fillStyle(0xffffff, 0.7); // Установка цвета окна (белый с прозрачностью)
+                window.fillRect(30 + col * 60, 40 + row * 50, 40, 35); // Рисование окна
+                container.add(window); // Добавление окна в контейнер
+            }
+        }
+        
+        // Крыша здания
+        const roof = scene.add.graphics(); // Создание графического объекта для крыши
+        roof.fillStyle(darkenColor(building.color, 40), 1); // Установка цвета крыши (темнее основного)
+        roof.fillTriangle(0, 0, building.width / 2, -30, building.width, 0); // Рисование треугольной крыши
+        container.add(roof); // Добавление крыши в контейнер
+        
+        // Текст на здании
+        const label = scene.add.text(building.width / 2, building.height / 2, building.label, { // Создание текстового объекта
+            fontSize: '18px', // Размер шрифта
+            fontFamily: 'Russo One, Arial', // Семейство шрифтов
+            color: '#ffffff', // Цвет текста
+            align: 'center', // Выравнивание по центру
+            fontStyle: 'bold', // Жирный стиль
+            stroke: '#000000', // Обводка текста
+            strokeThickness: 3 // Толщина обводки
+        });
+        label.setOrigin(0.5); // Установка точки привязки в центр
+        container.add(label); // Добавление текста в контейнер
+        
+        // Интерактивная зона для клика
+        const hitArea = scene.add.rectangle(building.width / 2, building.height / 2, building.width, building.height, 0xffffff, 0); // Создание невидимого прямоугольника
+        hitArea.setInteractive({ useHandCursor: true }); // Установка интерактивности с курсором-рукой
+        container.add(hitArea); // Добавление в контейнер
+        
+        // Эффект при наведении мыши
+        hitArea.on('pointerover', () => { // Обработчик события наведения
+            scene.tweens.add({ // Создание анимации
+                targets: container, // Анимируемый объект
+                scaleX: 1.05, // Увеличение по X на 5%
+                scaleY: 1.05, // Увеличение по Y на 5%
+                duration: 200, // Длительность анимации
+                ease: 'Power2' // Функция плавности
+            });
+        });
+        
+        // Эффект при убирании мыши
+        hitArea.on('pointerout', () => { // Обработчик события убирания мыши
+            scene.tweens.add({ // Создание анимации возврата
+                targets: container,
+                scaleX: 1,
+                scaleY: 1,
+                duration: 200,
+                ease: 'Power2'
+            });
+        });
+        
+        // Обработчик клика
+        hitArea.on('pointerdown', building.action); // При клике вызывается функция действия здания
+    });
+    
+    // ═══════════════════════════════════════════════════════════════════════
+    // КОРАБЛЬ - создание главного корабля игрока
+    // ═══════════════════════════════════════════════════════════════════════
+    
+    const ship = scene.add.container(600, 600); // Создание контейнера для корабля в центре нижней части экрана
+    
+    // Корпус корабля
+    const hull = scene.add.graphics(); // Создание графического объекта для корпуса
+    hull.fillStyle(0x2c3e50, 1); // Установка темно-синего цвета
+    hull.fillRoundedRect(-100, -40, 200, 80, 10); // Рисование корпуса
+    hull.lineStyle(4, 0x1a252f, 1); // Установка границы
+    hull.strokeRoundedRect(-100, -40, 200, 80, 10); // Отрисовка границы
+    ship.add(hull); // Добавление корпуса в контейнер корабля
+    
+    // Надстройка корабля (рубка)
+    const cabin = scene.add.graphics(); // Создание графического объекта для рубки
+    cabin.fillStyle(0x34495e, 1); // Установка серого цвета
+    cabin.fillRoundedRect(-60, -70, 120, 40, 8); // Рисование рубки
+    ship.add(cabin); // Добавление рубки в контейнер
+    
+    // Труба корабля
+    const chimney = scene.add.graphics(); // Создание графического объекта для трубы
+    chimney.fillStyle(0xe74c3c, 1); // Установка красного цвета
+    chimney.fillRect(-15, -100, 30, 40); // Рисование трубы
+    ship.add(chimney); // Добавление трубы в контейнер
+    
+    // Окна на рубке
+    for (let i = 0; i < 3; i++) { // Цикл для создания 3 окон
+        const window = scene.add.graphics(); // Создание графического объекта для окна
+        window.fillStyle(0x3498db, 0.8); // Установка голубого цвета
+        window.fillRect(-40 + i * 30, -60, 20, 15); // Рисование окна
+        ship.add(window); // Добавление окна в контейнер
+    }
+    
+    // Якорь
+    const anchor = scene.add.text(-90, -20, '⚓', { // Создание текстового объекта с эмодзи якоря
+        fontSize: '32px' // Размер шрифта
+    });
+    ship.add(anchor); // Добавление якоря в контейнер
+    
+    // Флаг России
+    const flag = scene.add.text(70, -90, '🇷🇺', { // Создание текстового объекта с эмодзи флага
+        fontSize: '28px'
+    });
+    ship.add(flag); // Добавление флага в контейнер
+    
+    // Анимация покачивания флага
+    scene.tweens.add({ // Создание анимации
+        targets: flag, // Анимируемый объект
+        angle: -10, // Поворот на -10 градусов
+        duration: 1000, // Длительность
+        yoyo: true, // Возврат обратно
+        repeat: -1, // Бесконечное повторение
+        ease: 'Sine.easeInOut' // Функция плавности
+    });
+    
+    // Анимация покачивания корабля на волнах
+    scene.tweens.add({ // Создание анимации
+        targets: ship, // Анимируемый объект
+        y: 590, // Конечная Y координата
+        duration: 3000, // Длительность 3 секунды
+        yoyo: true, // Возврат обратно
+        repeat: -1, // Бесконечное повторение
+        ease: 'Sine.easeInOut' // Плавное движение
+    });
+    
+    // Кнопка "Отправиться в путь" на корабле
+    const departButton = scene.add.container(0, -120); // Создание контейнера для кнопки
+    
+    const btnBg = scene.add.graphics(); // Создание графического объекта для фона кнопки
+    btnBg.fillStyle(0x27ae60, 1); // Установка зеленого цвета
+    btnBg.fillRoundedRect(-100, -25, 200, 50, 15); // Рисование закругленного прямоугольника
+    btnBg.lineStyle(3, 0x1e8449, 1); // Установка границы
+    btnBg.strokeRoundedRect(-100, -25, 200, 50, 15); // Отрисовка границы
+    departButton.add(btnBg); // Добавление фона в контейнер кнопки
+    
+    const btnText = scene.add.text(0, 0, '⛵ Отправиться\nв путь', { // Создание текста кнопки
+        fontSize: '16px', // Размер шрифта
+        fontFamily: 'Russo One, Arial', // Семейство шрифтов
+        color: '#ffffff', // Белый цвет
+        align: 'center' // Выравнивание по центру
+    });
+    btnText.setOrigin(0.5); // Установка точки привязки в центр
+    departButton.add(btnText); // Добавление текста в контейнер кнопки
+    
+    const btnHit = scene.add.rectangle(0, 0, 200, 50, 0xffffff, 0); // Создание невидимой области клика
+    btnHit.setInteractive({ useHandCursor: true }); // Установка интерактивности
+    
+    // Эффект при наведении на кнопку
+    btnHit.on('pointerover', () => { // Обработчик наведения
+        scene.tweens.add({ // Создание анимации
+            targets: departButton,
+            scaleX: 1.1,
+            scaleY: 1.1,
+            duration: 200,
+            ease: 'Back.easeOut'
+        });
+    });
+    
+    btnHit.on('pointerout', () => { // Обработчик убирания мыши
+        scene.tweens.add({ // Создание анимации возврата
+            targets: departButton,
+            scaleX: 1,
+            scaleY: 1,
+            duration: 200,
+            ease: 'Back.easeIn'
+        });
+    });
+    
+    btnHit.on('pointerdown', () => checkReadyToDepart(scene)); // При клике проверяем готовность к отплытию
+    departButton.add(btnHit); // Добавление области клика в контейнер кнопки
+    
+    ship.add(departButton); // Добавление кнопки в контейнер корабля
+    
+    // ═══════════════════════════════════════════════════════════════════════
+    // ПАНЕЛЬ СТАТУСА - отображение текущих ресурсов игрока
+    // ═══════════════════════════════════════════════════════════════════════
+    
+    const statusPanel = scene.add.container(600, 50); // Создание контейнера для панели статуса
+    statusPanel.setDepth(1000); // Установка глубины отрисовки (выше других объектов)
+    
+    const panelBg = scene.add.graphics(); // Создание фона панели
+    panelBg.fillStyle(0x1a252f, 0.9); // Темный полупрозрачный фон
+    panelBg.fillRoundedRect(-550, -30, 1100, 60, 15); // Рисование панели
+    panelBg.lineStyle(2, 0x4fc3f7, 1); // Голубая граница
+    panelBg.strokeRoundedRect(-550, -30, 1100, 60, 15); // Отрисовка границы
+    statusPanel.add(panelBg); // Добавление фона в контейнер
+    
+    // Текстовые элементы статуса
+    const statusTexts = { // Объект для хранения ссылок на текстовые элементы
+        money: scene.add.text(-520, 0, '', { fontSize: '18px', fontFamily: 'Nunito, Arial', color: '#ffffff', fontStyle: 'bold' }),
+        crew: scene.add.text(-220, 0, '', { fontSize: '18px', fontFamily: 'Nunito, Arial', color: '#ffffff', fontStyle: 'bold' }),
+        food: scene.add.text(50, 0, '', { fontSize: '18px', fontFamily: 'Nunito, Arial', color: '#ffffff', fontStyle: 'bold' }),
+        cargo: scene.add.text(280, 0, '', { fontSize: '18px', fontFamily: 'Nunito, Arial', color: '#ffffff', fontStyle: 'bold' })
+    };
+    
+    // Установка точки привязки для каждого текста
+    Object.values(statusTexts).forEach(text => text.setOrigin(0, 0.5));
+    
+    // Добавление всех текстов в контейнер
+    Object.values(statusTexts).forEach(text => statusPanel.add(text));
+    
+    // Функция обновления статуса
+    function updateStatus() { // Функция для обновления текста на панели статуса
+        statusTexts.money.setText(`💰 ${formatMoney(gameState.money)}`); // Обновление отображения денег
+        statusTexts.crew.setText(`👥 ${gameState.crew.length}/${GAME_DATA.maxCrew}`); // Обновление отображения экипажа
+        statusTexts.food.setText(`🍞 ${gameState.foodDays} дней`); // Обновление отображения продовольствия
+        statusTexts.cargo.setText(`⚖️ ${gameState.cargoUsed}/${GAME_DATA.maxCargoCapacity} кг`); // Обновление отображения груза
+    }
+    
+    updateStatus(); // Первоначальное обновление статуса
+    
+    // Сохранение функции обновления в контекст сцены для доступа из других функций
+    scene.updateStatus = updateStatus;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// МОДАЛЬНЫЕ ОКНА - создание всплывающих окон
+// ═══════════════════════════════════════════════════════════════════════════
+
+function createModal(scene, title, width, height) { // Функция создания базового модального окна
+    // Затемнение фона
+    const overlay = scene.add.graphics(); // Создание графического объекта для затемнения
+    overlay.fillStyle(0x000000, 0.7); // Черный полупрозрачный цвет
+    overlay.fillRect(0, 0, 1200, 800); // Рисование на весь экран
+    overlay.setInteractive(new Phaser.Geom.Rectangle(0, 0, 1200, 800), Phaser.Geom.Rectangle.Contains); // Установка интерактивности для блокировки кликов под окном
+    overlay.setDepth(1500); // Установка глубины выше остальных элементов
+    
+    // Контейнер для модального окна
+    const modal = scene.add.container(600, 400); // Создание контейнера в центре экрана
+    modal.setDepth(2000); // Установка еще большей глубины
+    
+    // Фон модального окна
+    const bg = scene.add.graphics(); // Создание графического объекта
+    bg.fillStyle(0x1a252f, 1); // Темный фон
+    bg.fillRoundedRect(-width / 2, -height / 2, width, height, 20); // Рисование закругленного прямоугольника
+    bg.lineStyle(3, 0x4fc3f7, 1); // Голубая граница
+    bg.strokeRoundedRect(-width / 2, -height / 2, width, height, 20); // Отрисовка границы
+    modal.add(bg); // Добавление фона в контейнер
+    
+    // Заголовок модального окна
+    const titleText = scene.add.text(0, -height / 2 + 30, title, { // Создание текста заголовка
+        fontSize: '24px', // Размер шрифта
+        fontFamily: 'Russo One, Arial', // Семейство шрифтов
+        color: '#4fc3f7', // Голубой цвет
+        fontStyle: 'bold' // Жирный стиль
+    });
+    titleText.setOrigin(0.5); // Центрирование
+    modal.add(titleText); // Добавление заголовка в контейнер
+    
+    // Кнопка закрытия (крестик)
+    const closeBtn = scene.add.text(width / 2 - 40, -height / 2 + 25, '✖', { // Создание текста крестика
+        fontSize: '24px',
+        color: '#e74c3c' // Красный цвет
+    });
+    closeBtn.setInteractive({ useHandCursor: true }); // Установка интерактивности
+    closeBtn.on('pointerdown', () => closeModal(scene, modal, overlay)); // При клике закрываем окно
+    modal.add(closeBtn); // Добавление крестика в контейнер
+    
+    // Анимация появления
+    modal.setAlpha(0); // Установка начальной прозрачности
+    modal.setScale(0.8); // Установка начального масштаба
+    scene.tweens.add({ // Создание анимации появления
+        targets: modal, // Анимируемый объект
+        alpha: 1, // Конечная прозрачность
+        scaleX: 1, // Конечный масштаб X
+        scaleY: 1, // Конечный масштаб Y
+        duration: 300, // Длительность
+        ease: 'Back.easeOut' // Функция плавности
+    });
+    
+    // Сохранение ссылки на overlay в модале для последующего удаления
+    modal.overlay = overlay;
+    
+    return modal; // Возврат созданного модального окна
+}
+
+function closeModal(scene, modal, overlay = null) { // Функция закрытия модального окна
+    if (!modal || !modal.scene) return; // Проверка существования модального окна
+    
+    scene.tweens.add({ // Создание анимации исчезновения
+        targets: modal, // Анимируемый объект
+        alpha: 0, // Конечная прозрачность
+        scaleX: 0.8, // Конечный масштаб X
+        scaleY: 0.8, // Конечный масштаб Y
+        duration: 200, // Длительность
+        ease: 'Back.easeIn', // Функция плавности
+        onComplete: () => { // Функция, вызываемая после завершения анимации
+            modal.destroy(); // Уничтожение модального окна
+            if (overlay) overlay.destroy(); // Уничтожение затемнения, если оно передано
+            if (modal.overlay) modal.overlay.destroy(); // Уничтожение затемнения из свойства модала
+            currentModal = null; // Сброс текущего модального окна
+        }
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ОКНО НАЙМА ЭКИПАЖА
+// ═══════════════════════════════════════════════════════════════════════════
+
+function openCrewModal(scene) { // Функция открытия окна найма экипажа
+    const modal = createModal(scene, '👥 НАБОР ЭКИПАЖА', 900, 650); // Создание модального окна
+    currentModal = modal; // Сохранение ссылки на текущее окно
+    
+    // Разделение экипажа на обязательных и необязательных
+    const requiredCrew = GAME_DATA.crew.filter(m => m.required); // Фильтрация обязательных членов
+    const optionalCrew = GAME_DATA.crew.filter(m => !m.required); // Фильтрация необязательных членов
+    
+    let yOffset = -250; // Начальное смещение по Y для размещения карточек
+    
+    // Заголовок обязательного экипажа
+    const requiredTitle = scene.add.text(-400, yOffset, '⚠️ ОБЯЗАТЕЛЬНЫЕ:', { // Создание текста заголовка
+        fontSize: '16px',
+        fontFamily: 'Russo One, Arial',
+        color: '#e74c3c' // Красный цвет
+    });
+    modal.add(requiredTitle); // Добавление заголовка в модальное окно
+    yOffset += 35; // Увеличение смещения
+    
+    // Карточки обязательных членов экипажа
+    requiredCrew.forEach((member, index) => { // Цикл по каждому обязательному члену
+        const card = createCrewCard(scene, member, -400 + (index % 2) * 380, yOffset + Math.floor(index / 2) * 150); // Создание карточки
+        modal.add(card); // Добавление карточки в модальное окно
+    });
+    
+    yOffset += Math.ceil(requiredCrew.length / 2) * 150 + 20; // Обновление смещения после обязательного экипажа
+    
+    // Заголовок дополнительного экипажа
+    const optionalTitle = scene.add.text(-400, yOffset, '💼 ДОПОЛНИТЕЛЬНЫЕ:', { // Создание текста заголовка
+        fontSize: '16px',
+        fontFamily: 'Russo One, Arial',
+        color: '#4fc3f7' // Голубой цвет
+    });
+    modal.add(optionalTitle); // Добавление заголовка в модальное окно
+    yOffset += 35; // Увеличение смещения
+    
+    // Карточки дополнительных членов экипажа
+    optionalCrew.forEach((member, index) => { // Цикл по каждому дополнительному члену
+        const card = createCrewCard(scene, member, -400 + (index % 2) * 380, yOffset + Math.floor(index / 2) * 150); // Создание карточки
+        modal.add(card); // Добавление карточки в модальное окно
+    });
+}
+
+function createCrewCard(scene, member, x, y) { // Функция создания карточки члена экипажа
+    const card = scene.add.container(x, y); // Создание контейнера для карточки
+    
+    const isHired = gameState.crew.includes(member.id); // Проверка, нанят ли член экипажа
+    const bgColor = isHired ? 0x27ae60 : parseInt(member.portrait.replace('#', '0x')); // Определение цвета фона (зеленый если нанят)
+    
+    // Фон карточки
+    const bg = scene.add.graphics(); // Создание графического объекта
+    bg.fillStyle(bgColor, 1); // Установка цвета фона
+    bg.fillRoundedRect(0, 0, 350, 120, 10); // Рисование закругленного прямоугольника
+    bg.lineStyle(2, darkenColor(bgColor, 30), 1); // Установка границы
+    bg.strokeRoundedRect(0, 0, 350, 120, 10); // Отрисовка границы
+    card.add(bg); // Добавление фона в контейнер
+    
+    // Иконка роли
+    const icon = scene.add.text(20, 15, member.roleIcon, { fontSize: '40px' }); // Создание текста с эмодзи
+    card.add(icon); // Добавление иконки в контейнер
+    
+    // Имя и роль
+    const name = scene.add.text(80, 20, member.name, { // Создание текста с именем
+        fontSize: '18px',
+        fontFamily: 'Russo One, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold'
+    });
+    card.add(name); // Добавление имени в контейнер
+    
+    const role = scene.add.text(80, 45, member.role, { // Создание текста с ролью
+        fontSize: '14px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ecf0f1'
+    });
+    card.add(role); // Добавление роли в контейнер
+    
+    // Особая черта
+    const trait = scene.add.text(80, 70, `${member.trait} (${member.traitEffect})`, { // Создание текста с чертой
+        fontSize: '12px',
+        fontFamily: 'Nunito, Arial',
+        color: '#f39c12'
+    });
+    card.add(trait); // Добавление черты в контейнер
+    
+    // Зарплата
+    const salary = scene.add.text(80, 95, `💰 ${formatMoney(member.salary)}`, { // Создание текста с зарплатой
+        fontSize: '14px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold'
+    });
+    card.add(salary); // Добавление зарплаты в контейнер
+    
+    // Кнопка найма/увольнения
+    const buttonText = isHired ? '❌ Уволить' : '✅ Нанять'; // Определение текста кнопки
+    const buttonColor = isHired ? 0xe74c3c : 0x27ae60; // Определение цвета кнопки
+    
+    const btn = scene.add.graphics(); // Создание графического объекта для кнопки
+    btn.fillStyle(buttonColor, 1); // Установка цвета
+    btn.fillRoundedRect(240, 40, 90, 40, 8); // Рисование кнопки
+    card.add(btn); // Добавление кнопки в контейнер
+    
+    const btnText = scene.add.text(285, 60, buttonText, { // Создание текста на кнопке
+        fontSize: '14px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold'
+    });
+    btnText.setOrigin(0.5); // Центрирование текста
+    card.add(btnText); // Добавление текста в контейнер
+    
+    // Интерактивная область для кнопки
+    const btnHit = scene.add.rectangle(285, 60, 90, 40, 0xffffff, 0); // Создание невидимой области
+    btnHit.setInteractive({ useHandCursor: true }); // Установка интерактивности
+    btnHit.on('pointerdown', () => toggleCrewMember(scene, member)); // При клике переключаем состояние найма
+    card.add(btnHit); // Добавление области в контейнер
+    
+    return card; // Возврат созданной карточки
+}
+
+function toggleCrewMember(scene, member) { // Функция переключения состояния найма члена экипажа
+    const isHired = gameState.crew.includes(member.id); // Проверка текущего состояния
+    
+    if (isHired) { // Если уже нанят
+        gameState.crew = gameState.crew.filter(id => id !== member.id); // Удаляем из экипажа
+        gameState.money += member.salary; // Возвращаем зарплату
+        showNotification(scene, `❌ ${member.name} уволен`, '#e74c3c'); // Показываем уведомление
+        showMoneyAnimation(scene, member.salary, true); // Анимация получения денег
+    } else { // Если не нанят
+        if (gameState.crew.length >= GAME_DATA.maxCrew) { // Проверка лимита экипажа
+            showNotification(scene, '❌ Достигнут лимит экипажа!', '#e74c3c'); // Показываем сообщение об ошибке
+            return; // Выход из функции
+        }
+        
+        if (gameState.money < member.salary) { // Проверка достаточности денег
+            showNotification(scene, '❌ Недостаточно денег!', '#e74c3c'); // Показываем сообщение об ошибке
+            return; // Выход из функции
+        }
+        
+        gameState.crew.push(member.id); // Добавляем в экипаж
+        gameState.money -= member.salary; // Вычитаем зарплату
+        showNotification(scene, `✅ ${member.name} нанят!`, '#27ae60'); // Показываем уведомление
+        showMoneyAnimation(scene, member.salary, false); // Анимация потери денег
+    }
+    
+    scene.updateStatus(); // Обновляем панель статуса
+    
+    // Перерисовываем окно
+    closeModal(scene, currentModal); // Закрываем текущее окно
+    setTimeout(() => openCrewModal(scene), 200); // Открываем новое окно через небольшую задержку
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ОКНО ПОКУПКИ СНАРЯЖЕНИЯ
+// ═══════════════════════════════════════════════════════════════════════════
+
+function openEquipmentModal(scene) { // Функция открытия окна покупки снаряжения
+    const modal = createModal(scene, '🛠️ СНАРЯЖЕНИЕ И ЭКИПИРОВКА', 900, 650); // Создание модального окна
+    currentModal = modal; // Сохранение ссылки
+    
+    let yOffset = -250; // Начальное смещение по Y
+    
+    GAME_DATA.equipment.forEach((item, index) => { // Цикл по каждому предмету снаряжения
+        const card = createEquipmentCard(scene, item, -400 + (index % 2) * 380, yOffset + Math.floor(index / 2) * 140); // Создание карточки
+        modal.add(card); // Добавление карточки в окно
+    });
+}
+
+function createEquipmentCard(scene, item, x, y) { // Функция создания карточки снаряжения
+    const card = scene.add.container(x, y); // Создание контейнера для карточки
+    
+    const isOwned = gameState.equipment.includes(item.id); // Проверка, куплен ли предмет
+    const bgColor = isOwned ? 0x27ae60 : 0x34495e; // Определение цвета фона
+    
+    // Фон карточки
+    const bg = scene.add.graphics(); // Создание графического объекта
+    bg.fillStyle(bgColor, 1); // Установка цвета
+    bg.fillRoundedRect(0, 0, 350, 110, 10); // Рисование прямоугольника
+    bg.lineStyle(2, darkenColor(bgColor, 30), 1); // Установка границы
+    bg.strokeRoundedRect(0, 0, 350, 110, 10); // Отрисовка границы
+    card.add(bg); // Добавление фона в контейнер
+    
+    // Иконка
+    const icon = scene.add.text(20, 15, item.icon, { fontSize: '36px' }); // Создание текста с эмодзи
+    card.add(icon); // Добавление иконки в контейнер
+    
+    // Название
+    const name = scene.add.text(80, 15, item.name, { // Создание текста с названием
+        fontSize: '16px',
+        fontFamily: 'Russo One, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold'
+    });
+    card.add(name); // Добавление названия в контейнер
+    
+    // Описание
+    const desc = scene.add.text(80, 40, item.description, { // Создание текста с описанием
+        fontSize: '12px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ecf0f1',
+        wordWrap: { width: 250 } // Перенос текста по словам
+    });
+    card.add(desc); // Добавление описания в контейнер
+    
+    // Эффект
+    const effect = scene.add.text(80, 70, `⚡ ${item.effect}`, { // Создание текста с эффектом
+        fontSize: '11px',
+        fontFamily: 'Nunito, Arial',
+        color: '#f39c12',
+        fontStyle: 'bold'
+    });
+    card.add(effect); // Добавление эффекта в контейнер
+    
+    // Цена
+    const price = scene.add.text(80, 90, `💰 ${formatMoney(item.price)}`, { // Создание текста с ценой
+        fontSize: '13px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold'
+    });
+    card.add(price); // Добавление цены в контейнер
+    
+    if (!isOwned) { // Если предмет еще не куплен
+        // Кнопка покупки
+        const btn = scene.add.graphics(); // Создание графического объекта для кнопки
+        btn.fillStyle(0x27ae60, 1); // Зеленый цвет
+        btn.fillRoundedRect(240, 35, 90, 40, 8); // Рисование кнопки
+        card.add(btn); // Добавление кнопки в контейнер
+        
+        const btnText = scene.add.text(285, 55, '💳 Купить', { // Создание текста на кнопке
+            fontSize: '14px',
+            fontFamily: 'Nunito, Arial',
+            color: '#ffffff',
+            fontStyle: 'bold'
+        });
+        btnText.setOrigin(0.5); // Центрирование текста
+        card.add(btnText); // Добавление текста в контейнер
+        
+        const btnHit = scene.add.rectangle(285, 55, 90, 40, 0xffffff, 0); // Создание невидимой области клика
+        btnHit.setInteractive({ useHandCursor: true }); // Установка интерактивности
+        btnHit.on('pointerdown', () => buyEquipment(scene, item)); // При клике покупаем предмет
+        card.add(btnHit); // Добавление области в контейнер
+    } else { // Если предмет уже куплен
+        // Индикатор владения
+        const owned = scene.add.text(285, 55, '✅ КУПЛЕНО', { // Создание текста статуса
+            fontSize: '14px',
+            fontFamily: 'Russo One, Arial',
+            color: '#ffffff',
+            fontStyle: 'bold'
+        });
+        owned.setOrigin(0.5); // Центрирование
+        card.add(owned); // Добавление текста в контейнер
+    }
+    
+    return card; // Возврат созданной карточки
+}
+
+function buyEquipment(scene, item) { // Функция покупки снаряжения
+    if (gameState.money < item.price) { // Проверка достаточности денег
+        showNotification(scene, '❌ Недостаточно денег!', '#e74c3c'); // Показываем сообщение об ошибке
+        return; // Выход из функции
+    }
+    
+    gameState.equipment.push(item.id); // Добавляем предмет в инвентарь
+    gameState.money -= item.price; // Вычитаем цену
+    showNotification(scene, `✅ Куплено: ${item.name}`, '#27ae60'); // Показываем уведомление
+    showMoneyAnimation(scene, item.price, false); // Анимация потери денег
+    
+    scene.updateStatus(); // Обновляем панель статуса
+    
+    // Перерисовываем окно
+    closeModal(scene, currentModal); // Закрываем текущее окно
+    setTimeout(() => openEquipmentModal(scene), 200); // Открываем новое окно
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ОКНО ПОКУПКИ ПРОДОВОЛЬСТВИЯ
+// ═══════════════════════════════════════════════════════════════════════════
+
+function openFoodModal(scene) { // Функция открытия окна покупки продовольствия
+    const modal = createModal(scene, '🍞 ПОКУПКА ПРОДОВОЛЬСТВИЯ', 800, 550); // Создание модального окна
+    currentModal = modal; // Сохранение ссылки
+    
+    // Заголовок выбора типа еды
+    const selectTitle = scene.add.text(0, -200, 'Выберите тип продовольствия:', { // Создание текста заголовка
+        fontSize: '18px',
+        fontFamily: 'Russo One, Arial',
+        color: '#4fc3f7'
+    });
+    selectTitle.setOrigin(0.5); // Центрирование
+    modal.add(selectTitle); // Добавление заголовка в окно
+    
+    let yOffset = -150; // Начальное смещение по Y
+    
+    // Карточки типов еды
+    GAME_DATA.food.forEach(foodType => { // Цикл по каждому типу еды
+        const card = scene.add.container(0, yOffset); // Создание контейнера для карточки
+        
+        const isSelected = gameState.selectedFoodType === foodType.id; // Проверка, выбран ли тип
+        const bgColor = isSelected ? 0x27ae60 : 0x34495e; // Определение цвета фона
+        
+        // Фон карточки
+        const bg = scene.add.graphics(); // Создание графического объекта
+        bg.fillStyle(bgColor, 1); // Установка цвета
+        bg.fillRoundedRect(-350, -35, 700, 70, 10); // Рисование прямоугольника
+        bg.lineStyle(2, darkenColor(bgColor, 30), 1); // Установка границы
+        bg.strokeRoundedRect(-350, -35, 700, 70, 10); // Отрисовка границы
+        card.add(bg); // Добавление фона в контейнер
+        
+        // Иконка еды
+        const icon = scene.add.text(-320, 0, foodType.icon, { fontSize: '36px' }); // Создание текста с эмодзи
+        icon.setOrigin(0.5); // Центрирование
+        card.add(icon); // Добавление иконки в контейнер
+        
+        // Название и описание
+        const name = scene.add.text(-250, -10, foodType.name, { // Создание текста с названием
+            fontSize: '18px',
+            fontFamily: 'Russo One, Arial',
+            color: '#ffffff',
+            fontStyle: 'bold'
+        });
+        card.add(name); // Добавление названия в контейнер
+        
+        const desc = scene.add.text(-250, 15, foodType.description, { // Создание текста с описанием
+            fontSize: '13px',
+            fontFamily: 'Nunito, Arial',
+            color: '#ecf0f1'
+        });
+        card.add(desc); // Добавление описания в контейнер
+        
+        // Цена и качество
+        const priceText = scene.add.text(100, 0, `💰 ${formatMoney(foodType.pricePerDay)} / день`, { // Создание текста с ценой
+            fontSize: '14px',
+            fontFamily: 'Nunito, Arial',
+            color: '#ffffff',
+            fontStyle: 'bold'
+        });
+        priceText.setOrigin(0, 0.5); // Установка точки привязки
+        card.add(priceText); // Добавление цены в контейнер
+        
+        // Звездочки качества
+        const stars = '⭐'.repeat(foodType.quality); // Создание строки со звездочками
+        const quality = scene.add.text(300, 0, stars, { fontSize: '16px' }); // Создание текста с звездочками
+        quality.setOrigin(1, 0.5); // Установка точки привязки справа
+        card.add(quality); // Добавление качества в контейнер
+        
+        // Интерактивная область для выбора
+        const hitArea = scene.add.rectangle(0, 0, 700, 70, 0xffffff, 0); // Создание невидимой области
+        hitArea.setInteractive({ useHandCursor: true }); // Установка интерактивности
+        hitArea.on('pointerdown', () => { // При клике
+            gameState.selectedFoodType = foodType.id; // Устанавливаем выбранный тип
+            closeModal(scene, currentModal); // Закрываем окно
+            setTimeout(() => openFoodModal(scene), 200); // Открываем снова для отображения изменений
+        });
+        card.add(hitArea); // Добавление области в контейнер
+        
+        modal.add(card); // Добавление карточки в окно
+        yOffset += 80; // Увеличение смещения для следующей карточки
+    });
+    
+    if (gameState.selectedFoodType) { // Если тип еды выбран
+        yOffset += 20; // Дополнительное смещение
+        
+        // Раздел покупки
+        const buyTitle = scene.add.text(0, yOffset, 'Количество дней:', { // Создание текста заголовка
+            fontSize: '16px',
+            fontFamily: 'Russo One, Arial',
+            color: '#4fc3f7'
+        });
+        buyTitle.setOrigin(0.5); // Центрирование
+        modal.add(buyTitle); // Добавление заголовка в окно
+        
+        yOffset += 40; // Увеличение смещения
+        
+        // Кнопки быстрой покупки
+        [5, 10, 20, 30].forEach((days, index) => { // Цикл по предустановленным количествам дней
+            const selectedFood = GAME_DATA.food.find(f => f.id === gameState.selectedFoodType); // Поиск выбранного типа еды
+            const cost = days * selectedFood.pricePerDay; // Вычисление стоимости
+            
+            const btn = scene.add.container(-200 + index * 110, yOffset); // Создание контейнера для кнопки
+            
+            const btnBg = scene.add.graphics(); // Создание графического объекта для фона кнопки
+            btnBg.fillStyle(0x27ae60, 1); // Зеленый цвет
+            btnBg.fillRoundedRect(-50, -30, 100, 60, 10); // Рисование кнопки
+            btn.add(btnBg); // Добавление фона в контейнер
+            
+            const btnDays = scene.add.text(0, -10, `${days} дней`, { // Создание текста с количеством дней
+                fontSize: '14px',
+                fontFamily: 'Russo One, Arial',
+                color: '#ffffff'
+            });
+            btnDays.setOrigin(0.5); // Центрирование
+            btn.add(btnDays); // Добавление текста в контейнер
+            
+            const btnCost = scene.add.text(0, 10, formatMoney(cost), { // Создание текста со стоимостью
+                fontSize: '12px',
+                fontFamily: 'Nunito, Arial',
+                color: '#ffffff'
+            });
+            btnCost.setOrigin(0.5); // Центрирование
+            btn.add(btnCost); // Добавление стоимости в контейнер
+            
+            const btnHit = scene.add.rectangle(0, 0, 100, 60, 0xffffff, 0); // Создание невидимой области клика
+            btnHit.setInteractive({ useHandCursor: true }); // Установка интерактивности
+            btnHit.on('pointerdown', () => buyFood(scene, days, cost)); // При клике покупаем еду
+            btn.add(btnHit); // Добавление области в контейнер
+            
+            modal.add(btn); // Добавление кнопки в окно
+        });
+    }
+}
+
+function buyFood(scene, days, cost) { // Функция покупки продовольствия
+    if (gameState.money < cost) { // Проверка достаточности денег
+        showNotification(scene, '❌ Недостаточно денег!', '#e74c3c'); // Показываем сообщение об ошибке
+        return; // Выход из функции
+    }
+    
+    gameState.foodDays += days; // Увеличиваем количество дней продовольствия
+    gameState.money -= cost; // Вычитаем стоимость
+    
+    const selectedFood = GAME_DATA.food.find(f => f.id === gameState.selectedFoodType); // Поиск выбранного типа еды
+    showNotification(scene, `✅ Куплено ${days} дней ${selectedFood.name}`, '#27ae60'); // Показываем уведомление
+    showMoneyAnimation(scene, cost, false); // Анимация потери денег
+    
+    scene.updateStatus(); // Обновляем панель статуса
+    
+    closeModal(scene, currentModal); // Закрываем окно
+    setTimeout(() => openFoodModal(scene), 200); // Открываем снова
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ОКНО ПОДРАБОТОК
+// ═══════════════════════════════════════════════════════════════════════════
+
+function openJobsModal(scene) { // Функция открытия окна подработок
+    const modal = createModal(scene, '📋 ДОСКА ОБЪЯВЛЕНИЙ', 900, 650); // Создание модального окна
+    currentModal = modal; // Сохранение ссылки
+    
+    let yOffset = -250; // Начальное смещение по Y
+    
+    GAME_DATA.jobs.forEach((job, index) => { // Цикл по каждому заданию
+        const card = createJobCard(scene, job, -400 + (index % 2) * 380, yOffset + Math.floor(index / 2) * 160); // Создание карточки
+        modal.add(card); // Добавление карточки в окно
+    });
+}
+
+function createJobCard(scene, job, x, y) { // Функция создания карточки задания
+    const card = scene.add.container(x, y); // Создание контейнера для карточки
+    
+    const isAccepted = gameState.jobs.includes(job.id); // Проверка, принято ли задание
+    const bgColor = isAccepted ? 0x27ae60 : getRiskColor(job.risk); // Определение цвета фона в зависимости от риска
+    
+    // Фон карточки
+    const bg = scene.add.graphics(); // Создание графического объекта
+    bg.fillStyle(bgColor, 1); // Установка цвета
+    bg.fillRoundedRect(0, 0, 350, 130, 10); // Рисование прямоугольника
+    bg.lineStyle(2, darkenColor(bgColor, 30), 1); // Установка границы
+    bg.strokeRoundedRect(0, 0, 350, 130, 10); // Отрисовка границы
+    card.add(bg); // Добавление фона в контейнер
+    
+    // Иконка задания
+    const icon = scene.add.text(20, 15, job.icon, { fontSize: '36px' }); // Создание текста с эмодзи
+    card.add(icon); // Добавление иконки в контейнер
+    
+    // Название задания
+    const title = scene.add.text(80, 15, job.title, { // Создание текста с названием
+        fontSize: '16px',
+        fontFamily: 'Russo One, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold',
+        wordWrap: { width: 250 } // Перенос текста по словам
+    });
+    card.add(title); // Добавление названия в контейнер
+    
+    // Описание задания
+    const desc = scene.add.text(80, 45, job.description, { // Создание текста с описанием
+        fontSize: '12px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ecf0f1',
+        wordWrap: { width: 250 } // Перенос текста по словам
+    });
+    card.add(desc); // Добавление описания в контейнер
+    
+    // Награда
+    const reward = scene.add.text(20, 80, `💰 Награда: ${formatMoney(job.reward)}`, { // Создание текста с наградой
+        fontSize: '13px',
+        fontFamily: 'Nunito, Arial',
+        color: '#f39c12',
+        fontStyle: 'bold'
+    });
+    card.add(reward); // Добавление награды в контейнер
+    
+    // Вес груза
+    const cargo = scene.add.text(20, 105, `⚖️ Груз: ${job.cargoWeight} кг`, { // Создание текста с весом груза
+        fontSize: '12px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff'
+    });
+    card.add(cargo); // Добавление веса в контейнер
+    
+    // Сложность
+    const difficulty = scene.add.text(180, 105, `⚠️ ${job.difficulty}`, { // Создание текста со сложностью
+        fontSize: '12px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff'
+    });
+    card.add(difficulty); // Добавление сложности в контейнер
+    
+    // Кнопка принятия/отказа
+    const buttonText = isAccepted ? '❌ Отказаться' : '✅ Принять'; // Определение текста кнопки
+    const buttonColor = isAccepted ? 0xe74c3c : 0x27ae60; // Определение цвета кнопки
+    
+    const btn = scene.add.graphics(); // Создание графического объекта для кнопки
+    btn.fillStyle(buttonColor, 1); // Установка цвета
+    btn.fillRoundedRect(220, 15, 110, 40, 8); // Рисование кнопки
+    card.add(btn); // Добавление кнопки в контейнер
+    
+    const btnText = scene.add.text(275, 35, buttonText, { // Создание текста на кнопке
+        fontSize: '13px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold'
+    });
+    btnText.setOrigin(0.5); // Центрирование текста
+    card.add(btnText); // Добавление текста в контейнер
+    
+    const btnHit = scene.add.rectangle(275, 35, 110, 40, 0xffffff, 0); // Создание невидимой области клика
+    btnHit.setInteractive({ useHandCursor: true }); // Установка интерактивности
+    btnHit.on('pointerdown', () => { // При клике
+        toggleJob(scene, job); // Переключаем состояние задания
+    });
+    card.add(btnHit); // Добавление области в контейнер
+    
+    return card; // Возврат созданной карточки
+}
+
+function toggleJob(scene, job) { // Функция переключения состояния задания
+    const isAccepted = gameState.jobs.includes(job.id); // Проверка текущего состояния
+    
+    if (isAccepted) { // Если задание уже принято
+        gameState.jobs = gameState.jobs.filter(id => id !== job.id); // Удаляем из списка
+        gameState.cargoUsed -= job.cargoWeight; // Уменьшаем использованный груз
+        showNotification(scene, `❌ Отменено: ${job.title}`, '#e74c3c'); // Показываем уведомление
+    } else { // Если задание не принято
+        if (gameState.cargoUsed + job.cargoWeight > GAME_DATA.maxCargoCapacity) { // Проверка вместимости
+            showNotification(scene, '❌ Нет места в трюме для груза!', '#e74c3c'); // Показываем сообщение об ошибке
+            return; // Выход из функции
+        }
+        
+        gameState.jobs.push(job.id); // Добавляем задание в список
+        gameState.cargoUsed += job.cargoWeight; // Увеличиваем использованный груз
+        showNotification(scene, `✅ Принято: ${job.title}`, '#27ae60'); // Показываем уведомление
+    }
+    
+    // Перерисовываем окно
+    closeModal(scene, currentModal); // Закрываем текущее окно
+    setTimeout(() => openJobsModal(scene), 200); // Открываем новое окно
+}
+
+function getRiskColor(level) { // Функция получения цвета в зависимости от уровня риска
+    const colors = { 1: 0x27ae60, 2: 0xf39c12, 3: 0xe74c3c }; // Словарь цветов: зеленый, оранжевый, красный
+    return colors[level] || 0x4fc3f7; // Возврат цвета или голубого по умолчанию
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ПРОВЕРКА ГОТОВНОСТИ К ОТПЛЫТИЮ
+// ═══════════════════════════════════════════════════════════════════════════
+
+function checkReadyToDepart(scene) { // Функция проверки готовности к отплытию
+    const problems = []; // Массив для хранения проблем
+    
+    // Проверка экипажа
+    const requiredCrew = GAME_DATA.crew.filter(m => m.required); // Получение списка обязательных членов
+    requiredCrew.forEach(member => { // Цикл по каждому обязательному члену
+        if (!gameState.crew.includes(member.id)) { // Если член не нанят
+            problems.push(`Нужен ${member.role}: ${member.name}`); // Добавляем проблему в список
+        }
+    });
+    
+    if (gameState.crew.length < GAME_DATA.minCrewRequired) { // Проверка минимального количества экипажа
+        problems.push(`Мало людей в команде (минимум ${GAME_DATA.minCrewRequired})`); // Добавляем проблему
+    }
+    
+    // Проверка еды
+    if (gameState.foodDays < 10) { // Проверка минимального количества продовольствия
+        problems.push('Мало продовольствия (минимум на 10 дней)'); // Добавляем проблему
+    }
+    
+    if (problems.length > 0) { // Если есть проблемы
+        showProblemModal(scene, problems); // Показываем окно с проблемами
+    } else { // Если все готово
+        showDepartureModal(scene); // Показываем окно отплытия
+    }
+}
+
+function showProblemModal(scene, problems) { // Функция отображения окна с проблемами
+    const modal = createModal(scene, '⚠️ НЕ ГОТОВЫ К ОТПЛЫТИЮ', 600, 400); // Создание модального окна
+    
+    const intro = scene.add.text(0, -120, 'Для отплытия необходимо:', { // Создание текста вступления
+        fontSize: '16px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff'
+    });
+    intro.setOrigin(0.5); // Центрирование
+    modal.add(intro); // Добавление текста в окно
+    
+    problems.forEach((problem, index) => { // Цикл по каждой проблеме
+        const text = scene.add.text(-250, -70 + index * 35, `❌ ${problem}`, { // Создание текста проблемы
+            fontSize: '14px',
+            fontFamily: 'Nunito, Arial',
+            color: '#e74c3c' // Красный цвет
+        });
+        modal.add(text); // Добавление текста в окно
+    });
+    
+    // Кнопка "Понятно"
+    const btnBg = scene.add.graphics(); // Создание графического объекта для кнопки
+    btnBg.fillStyle(0x3498db, 1); // Синий цвет
+    btnBg.fillRoundedRect(-60, 120, 120, 40, 10); // Рисование кнопки
+    modal.add(btnBg); // Добавление кнопки в окно
+    
+    const btnText = scene.add.text(0, 140, 'Понятно', { // Создание текста на кнопке
+        fontSize: '16px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold'
+    });
+    btnText.setOrigin(0.5); // Центрирование текста
+    modal.add(btnText); // Добавление текста в окно
+    
+    const btnHit = scene.add.rectangle(0, 140, 120, 40, 0xffffff, 0); // Создание невидимой области клика
+    btnHit.setInteractive({ useHandCursor: true }); // Установка интерактивности
+    btnHit.on('pointerdown', () => closeModal(scene, modal)); // При клике закрываем окно
+    modal.add(btnHit); // Добавление области в окно
+}
+
+function showDepartureModal(scene) { // Функция отображения окна отплытия
+    const modal = createModal(scene, '🚢 ГОТОВЫ К ОТПЛЫТИЮ!', 700, 500); // Создание модального окна
+    
+    // Сводка экспедиции
+    const summary = [ // Массив с информацией о подготовке
+        `💰 Бюджет: ${formatMoney(gameState.money)}`, // Оставшиеся деньги
+        `🧑‍✈️ Экипаж: ${gameState.crew.length} человек`, // Количество членов экипажа
+        `🍞 Продовольствие: на ${gameState.foodDays} дней`, // Количество продовольствия
+        `⚖️ Загрузка: ${gameState.cargoUsed}/${GAME_DATA.maxCargoCapacity} кг`, // Использованная вместимость груза
+        `💼 Подработки: ${gameState.jobs.length}` // Количество принятых заданий
+    ];
+    
+    // Вычисление ожидаемого заработка от заданий
+    const expectedReward = gameState.jobs.reduce((sum, jobId) => { // Суммирование наград
+        const job = GAME_DATA.jobs.find(j => j.id === jobId); // Поиск задания по ID
+        return sum + (job ? job.reward : 0); // Добавление награды к сумме
+    }, 0);
+    
+    if (expectedReward > 0) { // Если есть ожидаемый заработок
+        summary.push(`💵 Ожидаемый заработок: ${formatMoney(expectedReward)}`); // Добавляем в сводку
+    }
+    
+    summary.forEach((line, index) => { // Цикл по каждой строке сводки
+        const text = scene.add.text(-200, -120 + index * 35, line, { // Создание текста
+            fontSize: '16px',
+            fontFamily: 'Nunito, Arial',
+            color: '#ffffff'
+        });
+        modal.add(text); // Добавление текста в окно
+    });
+    
+    // Кнопка отплытия
+    const btnBg = scene.add.graphics(); // Создание графического объекта для кнопки
+    btnBg.fillStyle(0x27ae60, 1); // Зеленый цвет
+    btnBg.fillRoundedRect(-100, 130, 200, 50, 15); // Рисование кнопки
+    modal.add(btnBg); // Добавление кнопки в окно
+    
+    const btnText = scene.add.text(0, 155, '⛵ ОТПЛЫТЬ!', { // Создание текста на кнопке
+        fontSize: '20px',
+        fontFamily: 'Russo One, Arial',
+        color: '#ffffff'
+    });
+    btnText.setOrigin(0.5); // Центрирование текста
+    modal.add(btnText); // Добавление текста в окно
+    
+    const btnHit = scene.add.rectangle(0, 155, 200, 50, 0xffffff, 0); // Создание невидимой области клика
+    btnHit.setInteractive({ useHandCursor: true }); // Установка интерактивности
+    btnHit.on('pointerdown', () => { // При клике
+        // Здесь будет переход к следующей сцене путешествия (пока не реализовано)
+        closeModal(scene, modal); // Закрываем окно
+        showNotification(scene, '🚢 Отправляемся в путь! (переход к путешествию...)', '#27ae60'); // Показываем уведомление
+        
+        // Сохраняем состояние игры для следующей сцены
+        console.log('🎮 Состояние экспедиции:', gameState); // Вывод состояния в консоль
+        console.log('🎮 Ожидаемый заработок от подработок:', expectedReward); // Вывод заработка в консоль
+    });
+    modal.add(btnHit); // Добавление области в окно
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ - утилиты для форматирования и анимаций
+// ═══════════════════════════════════════════════════════════════════════════
+
+function formatMoney(amount) { // Функция форматирования денег в строку с разделителями
+    return amount.toLocaleString('ru-RU') + ' ₽'; // Форматирование числа в русской локали и добавление символа рубля
+}
+
+function darkenColor(color, percent) { // Функция затемнения цвета на заданный процент
+    const r = (color >> 16) & 0xFF; // Извлечение красного компонента
+    const g = (color >> 8) & 0xFF; // Извлечение зеленого компонента
+    const b = color & 0xFF; // Извлечение синего компонента
+    
+    const factor = (100 - percent) / 100; // Вычисление коэффициента затемнения
+    
+    const newR = Math.floor(r * factor); // Применение коэффициента к красному
+    const newG = Math.floor(g * factor); // Применение коэффициента к зеленому
+    const newB = Math.floor(b * factor); // Применение коэффициента к синему
+    
+    return (newR << 16) | (newG << 8) | newB; // Объединение компонентов обратно в шестнадцатеричное значение
+}
+
+function getMoraleEmoji() { // Функция получения эмодзи морали (не используется в текущей версии)
+    if (gameState.morale >= 80) return '😊 Отлично'; // Высокая мораль
+    if (gameState.morale >= 60) return '🙂 Хорошо'; // Хорошая мораль
+    if (gameState.morale >= 40) return '😐 Нормально'; // Средняя мораль
+    if (gameState.morale >= 20) return '😟 Плохо'; // Низкая мораль
+    return '😢 Ужасно'; // Очень низкая мораль
+}
+
+function showMoneyAnimation(scene, amount, isPositive) { // Функция отображения анимации изменения денег
+    const color = isPositive ? '#2ecc71' : '#e74c3c'; // Определение цвета (зеленый для прибыли, красный для расхода)
+    const prefix = isPositive ? '+' : ''; // Определение префикса (+ для прибыли)
+    
+    const text = scene.add.text(600, 700, `${prefix}${formatMoney(amount)}`, { // Создание текста с суммой
+        fontSize: '24px',
+        fontFamily: 'Russo One, Arial',
+        color: color,
+        stroke: '#000000', // Черная обводка
+        strokeThickness: 3 // Толщина обводки
+    });
+    text.setOrigin(0.5); // Центрирование
+    text.setDepth(2000); // Установка глубины отрисовки
+    
+    scene.tweens.add({ // Создание анимации
+        targets: text, // Анимируемый объект
+        y: 600, // Конечная Y координата (движение вверх)
+        alpha: 0, // Конечная прозрачность (исчезновение)
+        duration: 1500, // Длительность анимации
+        ease: 'Power2', // Функция плавности
+        onComplete: () => text.destroy() // Уничтожение текста после завершения анимации
+    });
+}
+
+function showNotification(scene, message, color) { // Функция отображения уведомления
+    const notification = scene.add.container(600, 100); // Создание контейнера для уведомления
+    notification.setDepth(2000); // Установка глубины отрисовки
+    
+    const bg = scene.add.graphics(); // Создание графического объекта для фона
+    bg.fillStyle(parseInt(color.replace('#', '0x')), 0.95); // Установка цвета фона (преобразование из hex)
+    bg.fillRoundedRect(-200, -25, 400, 50, 10); // Рисование закругленного прямоугольника
+    notification.add(bg); // Добавление фона в контейнер
+    
+    const text = scene.add.text(0, 0, message, { // Создание текста уведомления
+        fontSize: '16px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold'
+    });
+    text.setOrigin(0.5); // Центрирование текста
+    notification.add(text); // Добавление текста в контейнер
+    
+    notification.setAlpha(0); // Установка начальной прозрачности
+    notification.y = 50; // Установка начальной Y координаты
+    
+    // Анимация появления
+    scene.tweens.add({ // Создание анимации появления
+        targets: notification, // Анимируемый объект
+        y: 100, // Конечная Y координата
+        alpha: 1, // Конечная прозрачность
+        duration: 300, // Длительность
+        ease: 'Back.easeOut' // Функция плавности
+    });
+    
+    // Задержка перед исчезновением
+    scene.time.delayedCall(2000, () => { // Вызов функции через 2 секунды
+        scene.tweens.add({ // Создание анимации исчезновения
+            targets: notification, // Анимируемый объект
+            y: 50, // Конечная Y координата (движение вверх)
+            alpha: 0, // Конечная прозрачность
+            duration: 300, // Длительность
+            ease: 'Back.easeIn', // Функция плавности
+            onComplete: () => notification.destroy() // Уничтожение уведомления после завершения
+        });
+    });
+}
+
+function update() { // Функция обновления, вызываемая каждый кадр
+    // Обновляем статус панели каждый кадр (или по событиям)
+    // В текущей версии здесь нет логики, так как обновление происходит по событиям
+}
+    </script> <!-- Конец блока JavaScript -->
+</body> <!-- Конец тела документа -->
+</html> <!-- Конец HTML документа -->

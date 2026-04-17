@@ -1,0 +1,1894 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚢 Порт Мурманск - Подготовка экспедиции</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Nunito:wght@400;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a3a 0%, #0d1b2a 50%, #1b263b 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Nunito', sans-serif;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-family: 'Russo One', sans-serif;
+            color: #4fc3f7;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            text-shadow: 0 2px 10px rgba(79, 195, 247, 0.3);
+            letter-spacing: 2px;
+        }
+        
+        #game-container {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 
+                0 0 60px rgba(79, 195, 247, 0.2),
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                inset 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        
+        .instructions {
+            max-width: 1200px;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(79, 195, 247, 0.2);
+            border-radius: 12px;
+            padding: 20px 30px;
+            color: #b0bec5;
+            text-align: center;
+        }
+        
+        .instructions h3 {
+            color: #4fc3f7;
+            margin-bottom: 10px;
+            font-family: 'Russo One', sans-serif;
+        }
+        
+        .instructions p {
+            line-height: 1.6;
+        }
+        
+        .key {
+            display: inline-block;
+            background: rgba(79, 195, 247, 0.2);
+            border: 1px solid rgba(79, 195, 247, 0.4);
+            border-radius: 6px;
+            padding: 2px 8px;
+            margin: 0 4px;
+            font-weight: 600;
+            color: #4fc3f7;
+        }
+    </style>
+</head>
+<body>
+    <h1>⚓ ПОРТ МУРМАНСК — ПОДГОТОВКА ЭКСПЕДИЦИИ</h1>
+    <div id="game-container"></div>
+    <div class="instructions">
+        <h3>🎮 Как играть</h3>
+        <p>
+            Кликайте по зданиям порта, чтобы нанять команду, купить снаряжение и продовольствие. 
+            Возьмите подработку на <span class="key">Доске объявлений</span>, чтобы заработать дополнительные деньги.
+            Когда будете готовы — нажмите <span class="key">Отправиться в путь</span> на корабле!
+        </p>
+    </div>
+
+    <script>
+// ═══════════════════════════════════════════════════════════════════════════
+// ДАННЫЕ ИГРЫ
+// ═══════════════════════════════════════════════════════════════════════════
+
+const GAME_DATA = {
+    // Начальные ресурсы
+    initialMoney: 250000,
+    minCrewRequired: 6,
+    maxCrew: 12,
+    maxCargoCapacity: 100,
+    
+    // Члены экипажа для найма
+    crew: [
+        {
+            id: 'captain',
+            name: 'Иван Северов',
+            role: 'Капитан',
+            roleIcon: '👨‍✈️',
+            salary: 2000,
+            skill: 3,
+            trait: 'Опытный навигатор',
+            traitEffect: '+20% к скорости во льдах',
+            quote: 'Я проведу наш корабль через любые льды!',
+            hired: false,
+            required: true,
+            portrait: '#3498db'
+        },
+        {
+            id: 'mechanic1',
+            name: 'Пётр Гаечкин',
+            role: 'Механик',
+            roleIcon: '🔧',
+            salary: 1500,
+            skill: 3,
+            trait: 'Экономит топливо',
+            traitEffect: '-15% расход топлива',
+            quote: 'Я умею чинить двигатель прямо во льдах!',
+            hired: false,
+            required: true,
+            portrait: '#e67e22'
+        },
+        {
+            id: 'mechanic2',
+            name: 'Анна Болтова',
+            role: 'Механик',
+            roleIcon: '🔧',
+            salary: 1200,
+            skill: 2,
+            trait: 'Быстрый ремонт',
+            traitEffect: '-30% время ремонта',
+            quote: 'Дайте мне гаечный ключ — и корабль будет как новый!',
+            hired: false,
+            required: false,
+            portrait: '#9b59b6'
+        },
+        {
+            id: 'doctor',
+            name: 'Елена Айболитова',
+            role: 'Врач',
+            roleIcon: '👨‍⚕️',
+            salary: 1800,
+            skill: 3,
+            trait: 'Профилактика болезней',
+            traitEffect: '-50% шанс болезней',
+            quote: 'Здоровье команды — моя главная забота!',
+            hired: false,
+            required: true,
+            portrait: '#1abc9c'
+        },
+        {
+            id: 'cook',
+            name: 'Борис Поваров',
+            role: 'Кок',
+            roleIcon: '👨‍🍳',
+            salary: 1000,
+            skill: 2,
+            trait: 'Экономная готовка',
+            traitEffect: '-20% расход еды',
+            quote: 'Накормлю всю команду так, что пальчики оближете!',
+            hired: false,
+            required: true,
+            portrait: '#f39c12'
+        },
+        {
+            id: 'navigator',
+            name: 'Ольга Компасова',
+            role: 'Штурман',
+            roleIcon: '🧭',
+            salary: 1400,
+            skill: 2,
+            trait: 'Знание маршрутов',
+            traitEffect: '+15% к навигации',
+            quote: 'Северный морской путь — моя вторая родина!',
+            hired: false,
+            required: true,
+            portrait: '#e74c3c'
+        },
+        {
+            id: 'radioman',
+            name: 'Сергей Волнов',
+            role: 'Радист',
+            roleIcon: '📻',
+            salary: 1100,
+            skill: 2,
+            trait: 'Связь с берегом',
+            traitEffect: '+погодные предупреждения',
+            quote: 'Всегда на связи, в любую погоду!',
+            hired: false,
+            required: true,
+            portrait: '#2980b9'
+        },
+        {
+            id: 'sailor1',
+            name: 'Николай Морской',
+            role: 'Матрос',
+            roleIcon: '⚓',
+            salary: 800,
+            skill: 1,
+            trait: 'Крепкий здоровьем',
+            traitEffect: '+устойчивость к холоду',
+            quote: 'Готов к любой работе на палубе!',
+            hired: false,
+            required: false,
+            portrait: '#34495e'
+        },
+        {
+            id: 'sailor2',
+            name: 'Мария Якорева',
+            role: 'Матрос',
+            roleIcon: '⚓',
+            salary: 800,
+            skill: 2,
+            trait: 'Ловкая',
+            traitEffect: '+скорость при швартовке',
+            quote: 'Женщина на корабле — к удаче!',
+            hired: false,
+            required: false,
+            portrait: '#8e44ad'
+        },
+        {
+            id: 'sailor3',
+            name: 'Алексей Канатов',
+            role: 'Матрос',
+            roleIcon: '⚓',
+            salary: 700,
+            skill: 1,
+            trait: 'Боится льдов',
+            traitEffect: '-настроение во льдах',
+            quote: 'Надеюсь, льдов будет не слишком много...',
+            hired: false,
+            required: false,
+            portrait: '#7f8c8d'
+        },
+        {
+            id: 'scientist',
+            name: 'Виктор Наукин',
+            role: 'Учёный',
+            roleIcon: '🔬',
+            salary: 1600,
+            skill: 3,
+            trait: 'Исследователь',
+            traitEffect: '+бонусы за открытия',
+            quote: 'Каждая экспедиция — это новые открытия!',
+            hired: false,
+            required: false,
+            portrait: '#16a085'
+        },
+        {
+            id: 'diver',
+            name: 'Дмитрий Глубинов',
+            role: 'Водолаз',
+            roleIcon: '🤿',
+            salary: 1300,
+            skill: 2,
+            trait: 'Подводный ремонт',
+            traitEffect: '+ремонт без дока',
+            quote: 'Под водой — как дома!',
+            hired: false,
+            required: false,
+            portrait: '#0984e3'
+        }
+    ],
+    
+    // Снаряжение
+    equipment: [
+        { id: 'tools', name: 'Набор инструментов', icon: '🧰', price: 5000, weight: 5, effect: '+10% к ремонту', category: 'equipment' },
+        { id: 'rope', name: 'Канаты (комплект)', icon: '🪢', price: 2000, weight: 3, effect: 'Необходимо для швартовки', category: 'equipment' },
+        { id: 'radio', name: 'Запасная рация', icon: '📻', price: 8000, weight: 2, effect: 'Резервная связь', category: 'equipment' },
+        { id: 'lifeboat', name: 'Спасательная шлюпка', icon: '🚣', price: 15000, weight: 15, effect: '+безопасность экипажа', category: 'equipment' },
+        { id: 'anchor', name: 'Запасной якорь', icon: '⚓', price: 10000, weight: 20, effect: 'На случай потери', category: 'equipment' },
+        { id: 'lights', name: 'Прожекторы', icon: '🔦', price: 6000, weight: 5, effect: '+видимость ночью', category: 'equipment' },
+        { id: 'heater', name: 'Обогреватели', icon: '🔥', price: 12000, weight: 10, effect: '+комфорт экипажа', category: 'equipment' },
+        { id: 'gps', name: 'GPS-навигатор', icon: '📡', price: 20000, weight: 1, effect: '+точность навигации', category: 'equipment' },
+    ],
+    
+    // Продовольствие
+    food: [
+        { id: 'bread', name: 'Хлеб (запас)', icon: '🍞', price: 3000, weight: 10, effect: '+5 дней еды', days: 5, category: 'food' },
+        { id: 'meat', name: 'Мясные консервы', icon: '🥫', price: 8000, weight: 15, effect: '+10 дней еды', days: 10, category: 'food' },
+        { id: 'fish', name: 'Рыбные консервы', icon: '🐟', price: 6000, weight: 12, effect: '+8 дней еды', days: 8, category: 'food' },
+        { id: 'vegetables', name: 'Овощи сушёные', icon: '🥕', price: 4000, weight: 8, effect: '+6 дней еды', days: 6, category: 'food' },
+        { id: 'water', name: 'Питьевая вода', icon: '💧', price: 2000, weight: 20, effect: '+7 дней воды', days: 7, category: 'food' },
+        { id: 'tea', name: 'Чай и кофе', icon: '☕', price: 1500, weight: 3, effect: '+настроение', days: 0, category: 'food' },
+        { id: 'chocolate', name: 'Шоколад', icon: '🍫', price: 2500, weight: 5, effect: '+энергия, +настроение', days: 2, category: 'food' },
+        { id: 'vitamins', name: 'Витамины', icon: '💊', price: 5000, weight: 1, effect: '+здоровье экипажа', days: 0, category: 'food' },
+    ],
+    
+    // Медикаменты
+    medicine: [
+        { id: 'firstaid', name: 'Аптечка', icon: '🩹', price: 3000, weight: 2, effect: 'Базовая помощь', category: 'medicine' },
+        { id: 'antibiotics', name: 'Антибиотики', icon: '💊', price: 8000, weight: 1, effect: 'Лечение инфекций', category: 'medicine' },
+        { id: 'painkillers', name: 'Обезболивающие', icon: '💉', price: 4000, weight: 1, effect: 'Снятие боли', category: 'medicine' },
+        { id: 'frostbite', name: 'Мазь от обморожения', icon: '🧴', price: 5000, weight: 2, effect: 'Лечение обморожений', category: 'medicine' },
+    ],
+    
+    // Подработки
+    jobs: [
+        {
+            id: 'job1',
+            title: 'Доставка ящиков в Архангельск',
+            icon: '📦',
+            description: 'Перевезти 20 ящиков с оборудованием для метеостанции',
+            reward: 25000,
+            risk: 'Низкий',
+            riskLevel: 1,
+            requirement: 'Свободное место в трюме',
+            cargoWeight: 15,
+            duration: '+ 0 дней',
+            accepted: false
+        },
+        {
+            id: 'job2',
+            title: 'Перевозка замороженной рыбы',
+            icon: '🐟',
+            description: 'Доставить партию свежемороженой трески в Диксон',
+            reward: 40000,
+            risk: 'Средний',
+            riskLevel: 2,
+            requirement: 'Нужен холодильник на борту',
+            cargoWeight: 25,
+            duration: '+ 1 день',
+            accepted: false
+        },
+        {
+            id: 'job3',
+            title: 'Установка буя',
+            icon: '📡',
+            description: 'Установить навигационный буй в точке маршрута',
+            reward: 15000,
+            risk: 'Низкий',
+            riskLevel: 1,
+            requirement: 'Нужен водолаз',
+            cargoWeight: 5,
+            duration: '+ 0.5 дня',
+            accepted: false
+        },
+        {
+            id: 'job4',
+            title: 'Перевозка учёных',
+            icon: '🔬',
+            description: 'Взять на борт группу исследователей до острова Диксон',
+            reward: 35000,
+            risk: 'Низкий',
+            riskLevel: 1,
+            requirement: 'Свободные каюты',
+            cargoWeight: 0,
+            duration: '+ 2 дня остановка',
+            accepted: false
+        },
+        {
+            id: 'job5',
+            title: 'Срочная почта',
+            icon: '✉️',
+            description: 'Доставить важные документы на остров Врангеля',
+            reward: 20000,
+            risk: 'Высокий',
+            riskLevel: 3,
+            requirement: 'Быстрый корабль',
+            cargoWeight: 1,
+            duration: 'Срок ограничен!',
+            accepted: false
+        }
+    ]
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// СОСТОЯНИЕ ИГРЫ
+// ═══════════════════════════════════════════════════════════════════════════
+
+const gameState = {
+    money: GAME_DATA.initialMoney,
+    crew: [],
+    equipment: [],
+    food: [],
+    medicine: [],
+    jobs: [],
+    foodDays: 0,
+    cargoUsed: 0,
+    morale: 100,
+    fuelPercent: 100
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// КОНФИГУРАЦИЯ PHASER
+// ═══════════════════════════════════════════════════════════════════════════
+
+const config = {
+    type: Phaser.AUTO,
+    width: 1200,
+    height: 800,
+    parent: 'game-container',
+    backgroundColor: '#1a3a4a',
+    scene: {
+        preload: preload,
+        create: create,
+        update: update
+    }
+};
+
+const game = new Phaser.Game(config);
+
+let currentModal = null;
+let statusPanel = null;
+let moneyAnimations = [];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PRELOAD
+// ═══════════════════════════════════════════════════════════════════════════
+
+function preload() {
+    // Здесь можно загрузить спрайты, когда они будут готовы
+    // this.load.image('port_bg', 'assets/port_background.png');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CREATE - ОСНОВНАЯ СЦЕНА ПОРТА
+// ═══════════════════════════════════════════════════════════════════════════
+
+function create() {
+    const scene = this;
+    
+    // Фон порта
+    createPortBackground(scene);
+    
+    // Создаём здания
+    createBuildings(scene);
+    
+    // Панель состояния (всегда видна)
+    createStatusPanel(scene);
+    
+    // Декоративные элементы
+    createDecorations(scene);
+    
+    // Корабль
+    createShip(scene);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ФОН ПОРТА
+// ═══════════════════════════════════════════════════════════════════════════
+
+function createPortBackground(scene) {
+    // Градиентный фон неба
+    const skyGradient = scene.add.graphics();
+    skyGradient.fillGradientStyle(0x87CEEB, 0x87CEEB, 0x4a90a4, 0x4a90a4, 1);
+    skyGradient.fillRect(0, 0, 1200, 400);
+    
+    // Горы на заднем плане
+    const mountains = scene.add.graphics();
+    mountains.fillStyle(0x5d6d7e, 1);
+    mountains.beginPath();
+    mountains.moveTo(0, 400);
+    mountains.lineTo(150, 280);
+    mountains.lineTo(300, 350);
+    mountains.lineTo(450, 250);
+    mountains.lineTo(600, 320);
+    mountains.lineTo(750, 230);
+    mountains.lineTo(900, 300);
+    mountains.lineTo(1050, 260);
+    mountains.lineTo(1200, 350);
+    mountains.lineTo(1200, 400);
+    mountains.closePath();
+    mountains.fill();
+    
+    // Снежные вершины
+    mountains.fillStyle(0xecf0f1, 1);
+    mountains.beginPath();
+    mountains.moveTo(450, 250);
+    mountains.lineTo(430, 280);
+    mountains.lineTo(470, 280);
+    mountains.closePath();
+    mountains.fill();
+    
+    mountains.beginPath();
+    mountains.moveTo(750, 230);
+    mountains.lineTo(725, 265);
+    mountains.lineTo(775, 265);
+    mountains.closePath();
+    mountains.fill();
+    
+    // Море
+    const sea = scene.add.graphics();
+    sea.fillGradientStyle(0x2980b9, 0x2980b9, 0x1a5276, 0x1a5276, 1);
+    sea.fillRect(0, 400, 1200, 400);
+    
+    // Волны
+    for (let i = 0; i < 8; i++) {
+        const waveY = 420 + i * 45;
+        const wave = scene.add.graphics();
+        wave.lineStyle(2, 0x3498db, 0.3 - i * 0.03);
+        wave.beginPath();
+        for (let x = 0; x <= 1200; x += 10) {
+            const y = waveY + Math.sin(x * 0.02 + i) * 8;
+            if (x === 0) wave.moveTo(x, y);
+            else wave.lineTo(x, y);
+        }
+        wave.strokePath();
+        
+        // Анимация волн
+        scene.tweens.add({
+            targets: wave,
+            x: -50,
+            duration: 3000 + i * 500,
+            repeat: -1,
+            yoyo: true,
+            ease: 'Sine.easeInOut'
+        });
+    }
+    
+    // Причал
+    const dock = scene.add.graphics();
+    dock.fillStyle(0x6d4c41, 1);
+    dock.fillRect(50, 550, 400, 30);
+    dock.fillStyle(0x5d4037, 1);
+    dock.fillRect(50, 580, 400, 20);
+    
+    // Столбы причала
+    for (let i = 0; i < 5; i++) {
+        dock.fillStyle(0x4e342e, 1);
+        dock.fillRect(70 + i * 95, 580, 15, 60);
+    }
+    
+    // Земля/набережная
+    const ground = scene.add.graphics();
+    ground.fillStyle(0x7f8c8d, 1);
+    ground.fillRect(0, 600, 1200, 200);
+    
+    // Текстура земли
+    ground.fillStyle(0x6c7a7a, 1);
+    for (let i = 0; i < 20; i++) {
+        ground.fillRect(Math.random() * 1200, 620 + Math.random() * 160, 30 + Math.random() * 50, 5);
+    }
+    
+    // Заголовок
+    const titleBg = scene.add.graphics();
+    titleBg.fillStyle(0x000000, 0.5);
+    titleBg.fillRoundedRect(400, 15, 400, 50, 10);
+    
+    const title = scene.add.text(600, 40, '🏭 ПОРТ МУРМАНСК', {
+        fontSize: '28px',
+        fontFamily: 'Russo One, Arial',
+        color: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 2
+    });
+    title.setOrigin(0.5);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ЗДАНИЯ
+// ═══════════════════════════════════════════════════════════════════════════
+
+function createBuildings(scene) {
+    const buildings = [
+        {
+            x: 150, y: 500, width: 120, height: 100,
+            name: 'Кадровое\nагентство',
+            icon: '🧑‍✈️',
+            color: 0x3498db,
+            action: () => openCrewModal(scene)
+        },
+        {
+            x: 350, y: 500, width: 120, height: 120,
+            name: 'Склад\nснаряжения',
+            icon: '🧰',
+            color: 0xe67e22,
+            action: () => openEquipmentModal(scene)
+        },
+        {
+            x: 550, y: 500, width: 120, height: 110,
+            name: 'Продоволь-\nственный\nсклад',
+            icon: '🍞',
+            color: 0x27ae60,
+            action: () => openFoodModal(scene)
+        },
+        {
+            x: 750, y: 500, width: 130, height: 100,
+            name: 'Доска\nобъявлений',
+            icon: '💼',
+            color: 0x9b59b6,
+            action: () => openJobsModal(scene)
+        }
+    ];
+    
+    buildings.forEach(b => createBuilding(scene, b));
+}
+
+function createBuilding(scene, config) {
+    const container = scene.add.container(config.x, config.y);
+    
+    // Тень здания
+    const shadow = scene.add.graphics();
+    shadow.fillStyle(0x000000, 0.3);
+    shadow.fillRoundedRect(5, 5, config.width, config.height, 10);
+    container.add(shadow);
+    
+    // Основа здания
+    const building = scene.add.graphics();
+    building.fillStyle(config.color, 1);
+    building.fillRoundedRect(0, 0, config.width, config.height, 10);
+    building.lineStyle(3, 0xffffff, 0.3);
+    building.strokeRoundedRect(0, 0, config.width, config.height, 10);
+    container.add(building);
+    
+    // Крыша
+    const roof = scene.add.graphics();
+    roof.fillStyle(darkenColor(config.color, 30), 1);
+    roof.beginPath();
+    roof.moveTo(-10, 0);
+    roof.lineTo(config.width / 2, -30);
+    roof.lineTo(config.width + 10, 0);
+    roof.closePath();
+    roof.fill();
+    container.add(roof);
+    
+    // Окна
+    const windowCount = Math.floor(config.width / 40);
+    for (let i = 0; i < windowCount; i++) {
+        const win = scene.add.graphics();
+        win.fillStyle(0xf4d03f, 0.8);
+        win.fillRect(15 + i * 35, 20, 20, 25);
+        win.lineStyle(2, 0x5d4037, 1);
+        win.strokeRect(15 + i * 35, 20, 20, 25);
+        container.add(win);
+    }
+    
+    // Иконка
+    const icon = scene.add.text(config.width / 2, config.height / 2 - 5, config.icon, {
+        fontSize: '40px'
+    });
+    icon.setOrigin(0.5);
+    container.add(icon);
+    
+    // Название
+    const name = scene.add.text(config.width / 2, config.height + 15, config.name, {
+        fontSize: '14px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff',
+        align: 'center',
+        stroke: '#000000',
+        strokeThickness: 3
+    });
+    name.setOrigin(0.5, 0);
+    container.add(name);
+    
+    // Интерактивность
+    const hitArea = scene.add.rectangle(config.width / 2, config.height / 2, config.width, config.height, 0xffffff, 0);
+    hitArea.setInteractive({ useHandCursor: true });
+    container.add(hitArea);
+    
+    hitArea.on('pointerover', () => {
+        scene.tweens.add({
+            targets: container,
+            scaleX: 1.05,
+            scaleY: 1.05,
+            y: config.y - 10,
+            duration: 150,
+            ease: 'Back.easeOut'
+        });
+    });
+    
+    hitArea.on('pointerout', () => {
+        scene.tweens.add({
+            targets: container,
+            scaleX: 1,
+            scaleY: 1,
+            y: config.y,
+            duration: 150,
+            ease: 'Back.easeIn'
+        });
+    });
+    
+    hitArea.on('pointerdown', () => {
+        scene.tweens.add({
+            targets: container,
+            scaleX: 0.95,
+            scaleY: 0.95,
+            duration: 50,
+            yoyo: true,
+            onComplete: config.action
+        });
+    });
+    
+    return container;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// КОРАБЛЬ
+// ═══════════════════════════════════════════════════════════════════════════
+
+function createShip(scene) {
+    const shipContainer = scene.add.container(200, 420);
+    
+    // Корпус
+    const hull = scene.add.graphics();
+    hull.fillStyle(0x2c3e50, 1);
+    hull.beginPath();
+    hull.moveTo(-60, 0);
+    hull.lineTo(-80, 30);
+    hull.lineTo(80, 30);
+    hull.lineTo(100, 0);
+    hull.lineTo(80, -10);
+    hull.lineTo(-60, -10);
+    hull.closePath();
+    hull.fill();
+    hull.lineStyle(2, 0x1a252f, 1);
+    hull.strokePath();
+    shipContainer.add(hull);
+    
+    // Палуба
+    const deck = scene.add.graphics();
+    deck.fillStyle(0x6d4c41, 1);
+    deck.fillRect(-55, -25, 130, 15);
+    shipContainer.add(deck);
+    
+    // Надстройка
+    const cabin = scene.add.graphics();
+    cabin.fillStyle(0xecf0f1, 1);
+    cabin.fillRoundedRect(-30, -60, 60, 35, 5);
+    cabin.fillStyle(0x3498db, 0.8);
+    cabin.fillRect(-25, -55, 20, 15);
+    cabin.fillRect(5, -55, 20, 15);
+    shipContainer.add(cabin);
+    
+    // Труба
+    const chimney = scene.add.graphics();
+    chimney.fillStyle(0xe74c3c, 1);
+    chimney.fillRect(15, -85, 20, 25);
+    chimney.fillStyle(0xffffff, 1);
+    chimney.fillRect(15, -75, 20, 5);
+    shipContainer.add(chimney);
+    
+    // Флаг
+    const flag = scene.add.graphics();
+    flag.fillStyle(0xffffff, 1);
+    flag.fillRect(40, -90, 3, 50);
+    flag.fillStyle(0xff0000, 1);
+    flag.fillTriangle(43, -90, 43, -70, 70, -80);
+    shipContainer.add(flag);
+    
+    // Кнопка "Отправиться в путь"
+    const buttonContainer = scene.add.container(0, 60);
+    
+    const btnBg = scene.add.graphics();
+    btnBg.fillStyle(0x27ae60, 1);
+    btnBg.fillRoundedRect(-80, -20, 160, 40, 20);
+    btnBg.lineStyle(3, 0x1e8449, 1);
+    btnBg.strokeRoundedRect(-80, -20, 160, 40, 20);
+    buttonContainer.add(btnBg);
+    
+    const btnText = scene.add.text(0, 0, '🚢 В путь!', {
+        fontSize: '18px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold'
+    });
+    btnText.setOrigin(0.5);
+    buttonContainer.add(btnText);
+    
+    const btnHit = scene.add.rectangle(0, 0, 160, 40, 0xffffff, 0);
+    btnHit.setInteractive({ useHandCursor: true });
+    buttonContainer.add(btnHit);
+    
+    btnHit.on('pointerover', () => {
+        scene.tweens.add({
+            targets: buttonContainer,
+            scaleX: 1.1,
+            scaleY: 1.1,
+            duration: 100
+        });
+    });
+    
+    btnHit.on('pointerout', () => {
+        scene.tweens.add({
+            targets: buttonContainer,
+            scaleX: 1,
+            scaleY: 1,
+            duration: 100
+        });
+    });
+    
+    btnHit.on('pointerdown', () => {
+        checkReadyToDepart(scene);
+    });
+    
+    shipContainer.add(buttonContainer);
+    
+    // Покачивание корабля
+    scene.tweens.add({
+        targets: shipContainer,
+        y: 425,
+        rotation: 0.02,
+        duration: 2000,
+        repeat: -1,
+        yoyo: true,
+        ease: 'Sine.easeInOut'
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ДЕКОРАЦИИ
+// ═══════════════════════════════════════════════════════════════════════════
+
+function createDecorations(scene) {
+    // Чайки
+    for (let i = 0; i < 5; i++) {
+        const gull = scene.add.text(
+            100 + Math.random() * 1000,
+            100 + Math.random() * 200,
+            '🕊️',
+            { fontSize: '20px' }
+        );
+        
+        scene.tweens.add({
+            targets: gull,
+            x: gull.x + (Math.random() - 0.5) * 200,
+            y: gull.y + (Math.random() - 0.5) * 100,
+            duration: 3000 + Math.random() * 2000,
+            repeat: -1,
+            yoyo: true,
+            ease: 'Sine.easeInOut'
+        });
+    }
+    
+    // Облака
+    for (let i = 0; i < 4; i++) {
+        const cloud = scene.add.text(
+            -100 + i * 400,
+            50 + Math.random() * 100,
+            '☁️',
+            { fontSize: (30 + Math.random() * 20) + 'px' }
+        );
+        cloud.setAlpha(0.7);
+        
+        scene.tweens.add({
+            targets: cloud,
+            x: 1300,
+            duration: 30000 + Math.random() * 20000,
+            repeat: -1,
+            onRepeat: () => {
+                cloud.x = -100;
+                cloud.y = 50 + Math.random() * 100;
+            }
+        });
+    }
+    
+    // Бочки на причале
+    const barrels = ['🛢️', '🪵', '📦'];
+    for (let i = 0; i < 6; i++) {
+        scene.add.text(
+            80 + i * 60,
+            610 + (i % 2) * 15,
+            barrels[i % 3],
+            { fontSize: '25px' }
+        );
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ПАНЕЛЬ СОСТОЯНИЯ
+// ═══════════════════════════════════════════════════════════════════════════
+
+function createStatusPanel(scene) {
+    statusPanel = scene.add.container(600, 760);
+    
+    // Фон панели
+    const panelBg = scene.add.graphics();
+    panelBg.fillStyle(0x1a1a2e, 0.95);
+    panelBg.fillRoundedRect(-580, -35, 1160, 70, 15);
+    panelBg.lineStyle(2, 0x4fc3f7, 0.5);
+    panelBg.strokeRoundedRect(-580, -35, 1160, 70, 15);
+    statusPanel.add(panelBg);
+    
+    // Элементы статуса
+    const items = [
+        { key: 'money', icon: '💰', label: 'Деньги', getValue: () => formatMoney(gameState.money) },
+        { key: 'crew', icon: '🧑‍✈️', label: 'Экипаж', getValue: () => `${gameState.crew.length} / ${GAME_DATA.maxCrew}` },
+        { key: 'food', icon: '🍞', label: 'Еда', getValue: () => `${gameState.foodDays} дней` },
+        { key: 'fuel', icon: '⛽', label: 'Топливо', getValue: () => `${gameState.fuelPercent}%` },
+        { key: 'cargo', icon: '⚖️', label: 'Груз', getValue: () => `${gameState.cargoUsed} / ${GAME_DATA.maxCargoCapacity}` },
+        { key: 'morale', icon: '😊', label: 'Настрой', getValue: () => getMoraleEmoji() }
+    ];
+    
+    statusPanel.statusTexts = {};
+    
+    items.forEach((item, index) => {
+        const x = -480 + index * 190;
+        
+        // Иконка
+        const icon = scene.add.text(x, -10, item.icon, { fontSize: '24px' });
+        icon.setOrigin(0, 0.5);
+        statusPanel.add(icon);
+        
+        // Метка
+        const label = scene.add.text(x + 35, -18, item.label, {
+            fontSize: '12px',
+            fontFamily: 'Nunito, Arial',
+            color: '#95a5a6'
+        });
+        statusPanel.add(label);
+        
+        // Значение
+        const value = scene.add.text(x + 35, 2, item.getValue(), {
+            fontSize: '16px',
+            fontFamily: 'Nunito, Arial',
+            color: '#ffffff',
+            fontStyle: 'bold'
+        });
+        statusPanel.add(value);
+        
+        statusPanel.statusTexts[item.key] = { text: value, getValue: item.getValue };
+    });
+}
+
+function updateStatusPanel() {
+    if (!statusPanel || !statusPanel.statusTexts) return;
+    
+    Object.keys(statusPanel.statusTexts).forEach(key => {
+        const item = statusPanel.statusTexts[key];
+        item.text.setText(item.getValue());
+        
+        // Подсветка проблем
+        if (key === 'crew' && gameState.crew.length < GAME_DATA.minCrewRequired) {
+            item.text.setColor('#e74c3c');
+        } else if (key === 'food' && gameState.foodDays < 10) {
+            item.text.setColor('#f39c12');
+        } else {
+            item.text.setColor('#ffffff');
+        }
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// МОДАЛЬНОЕ ОКНО - БАЗОВЫЙ КЛАСС
+// ═══════════════════════════════════════════════════════════════════════════
+
+function createModal(scene, title, width, height) {
+    if (currentModal) {
+        currentModal.destroy();
+    }
+    
+    const modal = scene.add.container(600, 400);
+    modal.setDepth(1000);
+    
+    // Затемнение фона
+    const overlay = scene.add.rectangle(0, 0, 1200, 800, 0x000000, 0.7);
+    overlay.setInteractive();
+    modal.add(overlay);
+    
+    // Окно
+    const windowBg = scene.add.graphics();
+    windowBg.fillStyle(0x1e3a5f, 1);
+    windowBg.fillRoundedRect(-width/2, -height/2, width, height, 20);
+    windowBg.lineStyle(3, 0x4fc3f7, 1);
+    windowBg.strokeRoundedRect(-width/2, -height/2, width, height, 20);
+    modal.add(windowBg);
+    
+    // Заголовок
+    const titleBg = scene.add.graphics();
+    titleBg.fillStyle(0x0d2137, 1);
+    titleBg.fillRoundedRect(-width/2 + 10, -height/2 + 10, width - 20, 50, 10);
+    modal.add(titleBg);
+    
+    const titleText = scene.add.text(0, -height/2 + 35, title, {
+        fontSize: '24px',
+        fontFamily: 'Russo One, Arial',
+        color: '#4fc3f7'
+    });
+    titleText.setOrigin(0.5);
+    modal.add(titleText);
+    
+    // Кнопка закрытия
+    const closeBtn = scene.add.text(width/2 - 30, -height/2 + 35, '✖', {
+        fontSize: '24px',
+        color: '#e74c3c'
+    });
+    closeBtn.setOrigin(0.5);
+    closeBtn.setInteractive({ useHandCursor: true });
+    closeBtn.on('pointerdown', () => {
+        closeModal(scene, modal);
+    });
+    closeBtn.on('pointerover', () => closeBtn.setScale(1.2));
+    closeBtn.on('pointerout', () => closeBtn.setScale(1));
+    modal.add(closeBtn);
+    
+    // Анимация появления
+    modal.setScale(0.8);
+    modal.setAlpha(0);
+    scene.tweens.add({
+        targets: modal,
+        scaleX: 1,
+        scaleY: 1,
+        alpha: 1,
+        duration: 200,
+        ease: 'Back.easeOut'
+    });
+    
+    currentModal = modal;
+    return modal;
+}
+
+function closeModal(scene, modal) {
+    scene.tweens.add({
+        targets: modal,
+        scaleX: 0.8,
+        scaleY: 0.8,
+        alpha: 0,
+        duration: 150,
+        ease: 'Back.easeIn',
+        onComplete: () => {
+            modal.destroy();
+            currentModal = null;
+            updateStatusPanel();
+        }
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// МОДАЛЬНОЕ ОКНО - НАБОР ЭКИПАЖА
+// ═══════════════════════════════════════════════════════════════════════════
+
+function openCrewModal(scene) {
+    const modal = createModal(scene, '🧑‍✈️ КАДРОВОЕ АГЕНТСТВО', 1000, 650);
+    
+    // Контейнер для карточек с прокруткой
+    const cardsContainer = scene.add.container(0, 30);
+    modal.add(cardsContainer);
+    
+    // Создаём карточки экипажа
+    const cardsPerRow = 4;
+    const cardWidth = 220;
+    const cardHeight = 180;
+    const startX = -440;
+    const startY = -200;
+    
+    GAME_DATA.crew.forEach((member, index) => {
+        const row = Math.floor(index / cardsPerRow);
+        const col = index % cardsPerRow;
+        const x = startX + col * (cardWidth + 15);
+        const y = startY + row * (cardHeight + 15);
+        
+        const card = createCrewCard(scene, member, x, y);
+        cardsContainer.add(card);
+    });
+    
+    // Информация внизу
+    const infoText = scene.add.text(0, 280, 
+        `Минимум для экспедиции: ${GAME_DATA.minCrewRequired} человек | Максимум: ${GAME_DATA.maxCrew} человек`, {
+        fontSize: '14px',
+        fontFamily: 'Nunito, Arial',
+        color: '#95a5a6',
+        align: 'center'
+    });
+    infoText.setOrigin(0.5);
+    modal.add(infoText);
+}
+
+function createCrewCard(scene, member, x, y) {
+    const card = scene.add.container(x, y);
+    
+    const isHired = gameState.crew.includes(member.id);
+    const bgColor = isHired ? 0x27ae60 : 0x2c3e50;
+    
+    // Фон карточки
+    const bg = scene.add.graphics();
+    bg.fillStyle(bgColor, 1);
+    bg.fillRoundedRect(0, 0, 210, 170, 12);
+    bg.lineStyle(2, isHired ? 0x2ecc71 : 0x4fc3f7, 1);
+    bg.strokeRoundedRect(0, 0, 210, 170, 12);
+    card.add(bg);
+    
+    // Пометка "Обязательно"
+    if (member.required && !isHired) {
+        const reqBadge = scene.add.graphics();
+        reqBadge.fillStyle(0xe74c3c, 1);
+        reqBadge.fillRoundedRect(130, 5, 75, 20, 5);
+        card.add(reqBadge);
+        
+        const reqText = scene.add.text(167, 15, 'НУЖЕН!', {
+            fontSize: '10px',
+            fontFamily: 'Nunito, Arial',
+            color: '#ffffff',
+            fontStyle: 'bold'
+        });
+        reqText.setOrigin(0.5);
+        card.add(reqText);
+    }
+    
+    // Портрет (цветной круг)
+    const portrait = scene.add.graphics();
+    portrait.fillStyle(parseInt(member.portrait.replace('#', '0x')), 1);
+    portrait.fillCircle(40, 45, 30);
+    portrait.lineStyle(3, 0xffffff, 0.5);
+    portrait.strokeCircle(40, 45, 30);
+    card.add(portrait);
+    
+    // Иконка роли
+    const roleIcon = scene.add.text(40, 45, member.roleIcon, {
+        fontSize: '28px'
+    });
+    roleIcon.setOrigin(0.5);
+    card.add(roleIcon);
+    
+    // Имя
+    const name = scene.add.text(80, 25, member.name, {
+        fontSize: '14px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold'
+    });
+    card.add(name);
+    
+    // Роль
+    const role = scene.add.text(80, 42, member.role, {
+        fontSize: '12px',
+        fontFamily: 'Nunito, Arial',
+        color: '#4fc3f7'
+    });
+    card.add(role);
+    
+    // Звёзды навыка
+    const stars = '⭐'.repeat(member.skill) + '☆'.repeat(3 - member.skill);
+    const skillText = scene.add.text(80, 58, stars, {
+        fontSize: '12px'
+    });
+    card.add(skillText);
+    
+    // Особенность
+    const trait = scene.add.text(10, 85, `⚡ ${member.trait}`, {
+        fontSize: '11px',
+        fontFamily: 'Nunito, Arial',
+        color: '#f39c12',
+        wordWrap: { width: 190 }
+    });
+    card.add(trait);
+    
+    // Зарплата
+    const salary = scene.add.text(10, 115, `💰 ${formatMoney(member.salary)}/день`, {
+        fontSize: '12px',
+        fontFamily: 'Nunito, Arial',
+        color: '#2ecc71'
+    });
+    card.add(salary);
+    
+    // Кнопка
+    const btnBg = scene.add.graphics();
+    const btnColor = isHired ? 0xe74c3c : 0x3498db;
+    btnBg.fillStyle(btnColor, 1);
+    btnBg.fillRoundedRect(10, 138, 190, 25, 8);
+    card.add(btnBg);
+    
+    const btnText = scene.add.text(105, 150, isHired ? '❌ Уволить' : '✓ Нанять', {
+        fontSize: '13px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold'
+    });
+    btnText.setOrigin(0.5);
+    card.add(btnText);
+    
+    // Интерактивность
+    const hitArea = scene.add.rectangle(105, 150, 190, 25, 0xffffff, 0);
+    hitArea.setInteractive({ useHandCursor: true });
+    card.add(hitArea);
+    
+    hitArea.on('pointerdown', () => {
+        toggleHireCrew(scene, member);
+    });
+    
+    // Подсказка при наведении на карточку (не перекрывает кнопку внизу)
+    const cardHit = scene.add.rectangle(105, 60, 210, 120, 0xffffff, 0);
+    cardHit.setInteractive({ useHandCursor: true });
+    card.add(cardHit);
+    
+    // Поднимаем кнопку наверх по глубине
+    card.bringToTop(hitArea);
+    
+    cardHit.on('pointerover', () => {
+        showCrewQuote(scene, member, card);
+    });
+    
+    cardHit.on('pointerout', () => {
+        hideCrewQuote(scene);
+    });
+    
+    return card;
+}
+
+let quoteContainer = null;
+
+function showCrewQuote(scene, member, card) {
+    if (quoteContainer) {
+        quoteContainer.destroy();
+    }
+    
+    quoteContainer = scene.add.container(card.x + 105, card.y - 40);
+    quoteContainer.setDepth(1001);
+    
+    const bubble = scene.add.graphics();
+    bubble.fillStyle(0x0d2137, 0.95);
+    bubble.fillRoundedRect(-100, -25, 200, 50, 10);
+    bubble.lineStyle(2, 0x4fc3f7, 1);
+    bubble.strokeRoundedRect(-100, -25, 200, 50, 10);
+    quoteContainer.add(bubble);
+    
+    const quote = scene.add.text(0, 0, `"${member.quote}"`, {
+        fontSize: '11px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff',
+        fontStyle: 'italic',
+        wordWrap: { width: 180 },
+        align: 'center'
+    });
+    quote.setOrigin(0.5);
+    quoteContainer.add(quote);
+    
+    if (currentModal) {
+        currentModal.add(quoteContainer);
+    }
+}
+
+function hideCrewQuote(scene) {
+    if (quoteContainer) {
+        quoteContainer.destroy();
+        quoteContainer = null;
+    }
+}
+
+function toggleHireCrew(scene, member) {
+    const isHired = gameState.crew.includes(member.id);
+    
+    if (isHired) {
+        // Увольняем
+        gameState.crew = gameState.crew.filter(id => id !== member.id);
+        showMoneyAnimation(scene, member.salary * 5, true); // Возврат части денег
+        gameState.money += member.salary * 5;
+    } else {
+        // Проверяем деньги
+        const hiringCost = member.salary * 10; // Аванс за 10 дней
+        if (gameState.money < hiringCost) {
+            showNotification(scene, '❌ Недостаточно денег!', '#e74c3c');
+            return;
+        }
+        if (gameState.crew.length >= GAME_DATA.maxCrew) {
+            showNotification(scene, '❌ Экипаж укомплектован!', '#e74c3c');
+            return;
+        }
+        
+        gameState.crew.push(member.id);
+        gameState.money -= hiringCost;
+        showMoneyAnimation(scene, -hiringCost, false);
+    }
+    
+    // Перерисовываем модальное окно
+    closeModal(scene, currentModal);
+    setTimeout(() => openCrewModal(scene), 200);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// МОДАЛЬНОЕ ОКНО - СНАРЯЖЕНИЕ
+// ═══════════════════════════════════════════════════════════════════════════
+
+function openEquipmentModal(scene) {
+    const modal = createModal(scene, '🧰 СКЛАД СНАРЯЖЕНИЯ', 900, 600);
+    
+    // Заголовки секций
+    const sections = [
+        { title: '🧰 Снаряжение', items: GAME_DATA.equipment, y: -180 },
+        { title: '💊 Медикаменты', items: GAME_DATA.medicine, y: 80 }
+    ];
+    
+    sections.forEach(section => {
+        const sectionTitle = scene.add.text(-400, section.y, section.title, {
+            fontSize: '18px',
+            fontFamily: 'Russo One, Arial',
+            color: '#f39c12'
+        });
+        modal.add(sectionTitle);
+        
+        // Полка
+        const shelf = scene.add.graphics();
+        shelf.fillStyle(0x6d4c41, 1);
+        shelf.fillRect(-400, section.y + 120, 800, 10);
+        shelf.fillStyle(0x5d4037, 1);
+        shelf.fillRect(-400, section.y + 130, 800, 5);
+        modal.add(shelf);
+        
+        // Товары
+        section.items.forEach((item, index) => {
+            const x = -360 + (index % 4) * 200;
+            const y = section.y + 35 + Math.floor(index / 4) * 80;
+            const itemCard = createShopItem(scene, item, x, y);
+            modal.add(itemCard);
+        });
+    });
+    
+    // Индикатор загрузки
+    addCargoIndicator(scene, modal, 240);
+}
+
+function openFoodModal(scene) {
+    const modal = createModal(scene, '🍞 ПРОДОВОЛЬСТВЕННЫЙ СКЛАД', 900, 500);
+    
+    const sectionTitle = scene.add.text(-400, -150, '🍞 Продукты и припасы', {
+        fontSize: '18px',
+        fontFamily: 'Russo One, Arial',
+        color: '#27ae60'
+    });
+    modal.add(sectionTitle);
+    
+    // Полки
+    for (let i = 0; i < 2; i++) {
+        const shelf = scene.add.graphics();
+        shelf.fillStyle(0x6d4c41, 1);
+        shelf.fillRect(-400, -30 + i * 130, 800, 10);
+        shelf.fillStyle(0x5d4037, 1);
+        shelf.fillRect(-400, -20 + i * 130, 800, 5);
+        modal.add(shelf);
+    }
+    
+    // Товары
+    GAME_DATA.food.forEach((item, index) => {
+        const x = -360 + (index % 4) * 200;
+        const y = -115 + Math.floor(index / 4) * 130;
+        const itemCard = createShopItem(scene, item, x, y, true);
+        modal.add(itemCard);
+    });
+    
+    // Индикатор загрузки и еды
+    addCargoIndicator(scene, modal, 180);
+    
+    const foodInfo = scene.add.text(0, 210, `🍞 Запас еды: ${gameState.foodDays} дней`, {
+        fontSize: '16px',
+        fontFamily: 'Nunito, Arial',
+        color: '#2ecc71'
+    });
+    foodInfo.setOrigin(0.5);
+    modal.add(foodInfo);
+}
+
+function createShopItem(scene, item, x, y, isFood = false) {
+    const container = scene.add.container(x, y);
+    
+    const isPurchased = gameState.equipment.includes(item.id) || 
+                        gameState.food.includes(item.id) ||
+                        gameState.medicine.includes(item.id);
+    
+    // Фон
+    const bg = scene.add.graphics();
+    bg.fillStyle(isPurchased ? 0x27ae60 : 0x2c3e50, 1);
+    bg.fillRoundedRect(0, 0, 180, 70, 10);
+    bg.lineStyle(2, isPurchased ? 0x2ecc71 : 0x4fc3f7, 0.5);
+    bg.strokeRoundedRect(0, 0, 180, 70, 10);
+    container.add(bg);
+    
+    // Иконка
+    const icon = scene.add.text(10, 35, item.icon, { fontSize: '30px' });
+    icon.setOrigin(0, 0.5);
+    container.add(icon);
+    
+    // Название
+    const name = scene.add.text(50, 12, item.name, {
+        fontSize: '12px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold',
+        wordWrap: { width: 120 }
+    });
+    container.add(name);
+    
+    // Эффект
+    const effect = scene.add.text(50, 35, item.effect, {
+        fontSize: '10px',
+        fontFamily: 'Nunito, Arial',
+        color: '#4fc3f7',
+        wordWrap: { width: 120 }
+    });
+    container.add(effect);
+    
+    // Цена и вес
+    const priceText = scene.add.text(50, 52, `💰${formatMoney(item.price)} | ⚖️${item.weight}кг`, {
+        fontSize: '10px',
+        fontFamily: 'Nunito, Arial',
+        color: '#95a5a6'
+    });
+    container.add(priceText);
+    
+    // Интерактивность
+    const hitArea = scene.add.rectangle(90, 35, 180, 70, 0xffffff, 0);
+    hitArea.setInteractive({ useHandCursor: true });
+    container.add(hitArea);
+    
+    hitArea.on('pointerover', () => {
+        bg.clear();
+        bg.fillStyle(isPurchased ? 0x2ecc71 : 0x34495e, 1);
+        bg.fillRoundedRect(0, 0, 180, 70, 10);
+        bg.lineStyle(2, 0x4fc3f7, 1);
+        bg.strokeRoundedRect(0, 0, 180, 70, 10);
+    });
+    
+    hitArea.on('pointerout', () => {
+        bg.clear();
+        bg.fillStyle(isPurchased ? 0x27ae60 : 0x2c3e50, 1);
+        bg.fillRoundedRect(0, 0, 180, 70, 10);
+        bg.lineStyle(2, isPurchased ? 0x2ecc71 : 0x4fc3f7, 0.5);
+        bg.strokeRoundedRect(0, 0, 180, 70, 10);
+    });
+    
+    hitArea.on('pointerdown', () => {
+        togglePurchaseItem(scene, item);
+    });
+    
+    return container;
+}
+
+function togglePurchaseItem(scene, item) {
+    const category = item.category;
+    const stateKey = category === 'equipment' ? 'equipment' : 
+                     category === 'medicine' ? 'medicine' : 'food';
+    const isPurchased = gameState[stateKey].includes(item.id);
+    
+    if (isPurchased) {
+        // Возврат
+        gameState[stateKey] = gameState[stateKey].filter(id => id !== item.id);
+        gameState.money += Math.floor(item.price * 0.8); // Возврат 80%
+        gameState.cargoUsed -= item.weight;
+        if (item.days) gameState.foodDays -= item.days;
+        showMoneyAnimation(scene, Math.floor(item.price * 0.8), true);
+    } else {
+        // Покупка
+        if (gameState.money < item.price) {
+            showNotification(scene, '❌ Недостаточно денег!', '#e74c3c');
+            return;
+        }
+        if (gameState.cargoUsed + item.weight > GAME_DATA.maxCargoCapacity) {
+            showNotification(scene, '❌ Нет места в трюме!', '#e74c3c');
+            return;
+        }
+        
+        gameState[stateKey].push(item.id);
+        gameState.money -= item.price;
+        gameState.cargoUsed += item.weight;
+        if (item.days) gameState.foodDays += item.days;
+        showMoneyAnimation(scene, -item.price, false);
+    }
+    
+    // Перерисовываем
+    closeModal(scene, currentModal);
+    setTimeout(() => {
+        if (category === 'food') openFoodModal(scene);
+        else openEquipmentModal(scene);
+    }, 200);
+}
+
+function addCargoIndicator(scene, modal, yPos) {
+    const container = scene.add.container(0, yPos);
+    
+    const label = scene.add.text(-200, 0, '📦 Загрузка трюма:', {
+        fontSize: '14px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff'
+    });
+    container.add(label);
+    
+    // Полоска загрузки
+    const barBg = scene.add.graphics();
+    barBg.fillStyle(0x2c3e50, 1);
+    barBg.fillRoundedRect(-50, -8, 250, 20, 5);
+    container.add(barBg);
+    
+    const fillPercent = gameState.cargoUsed / GAME_DATA.maxCargoCapacity;
+    const fillColor = fillPercent > 0.9 ? 0xe74c3c : fillPercent > 0.7 ? 0xf39c12 : 0x27ae60;
+    
+    const barFill = scene.add.graphics();
+    barFill.fillStyle(fillColor, 1);
+    barFill.fillRoundedRect(-50, -8, 250 * fillPercent, 20, 5);
+    container.add(barFill);
+    
+    const cargoText = scene.add.text(210, 0, `${gameState.cargoUsed}/${GAME_DATA.maxCargoCapacity} кг`, {
+        fontSize: '12px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff'
+    });
+    cargoText.setOrigin(0, 0.5);
+    container.add(cargoText);
+    
+    modal.add(container);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// МОДАЛЬНОЕ ОКНО - ДОСКА ОБЪЯВЛЕНИЙ (ПОДРАБОТКИ)
+// ═══════════════════════════════════════════════════════════════════════════
+
+function openJobsModal(scene) {
+    const modal = createModal(scene, '💼 ДОСКА ОБЪЯВЛЕНИЙ ПОРТА', 1000, 600);
+    
+    const subtitle = scene.add.text(0, -230, '🔥 Возьмите попутный груз — заработайте дополнительные деньги!', {
+        fontSize: '14px',
+        fontFamily: 'Nunito, Arial',
+        color: '#f39c12'
+    });
+    subtitle.setOrigin(0.5);
+    modal.add(subtitle);
+    
+    // Карточки подработок
+    GAME_DATA.jobs.forEach((job, index) => {
+        const row = Math.floor(index / 2);
+        const col = index % 2;
+        const x = -230 + col * 460;
+        const y = -170 + row * 140;
+        
+        const jobCard = createJobCard(scene, job, x, y);
+        modal.add(jobCard);
+    });
+    
+    // Предупреждение
+    const warning = scene.add.text(0, 250, '⚠️ Каждое задание увеличивает нагрузку и может добавить времени к путешествию', {
+        fontSize: '12px',
+        fontFamily: 'Nunito, Arial',
+        color: '#95a5a6'
+    });
+    warning.setOrigin(0.5);
+    modal.add(warning);
+}
+
+function createJobCard(scene, job, x, y) {
+    const card = scene.add.container(x, y);
+    
+    const isAccepted = gameState.jobs.includes(job.id);
+    
+    // Фон
+    const bg = scene.add.graphics();
+    bg.fillStyle(isAccepted ? 0x27ae60 : 0x2c3e50, 1);
+    bg.fillRoundedRect(0, 0, 440, 120, 12);
+    bg.lineStyle(2, isAccepted ? 0x2ecc71 : getRiskColor(job.riskLevel), 1);
+    bg.strokeRoundedRect(0, 0, 440, 120, 12);
+    card.add(bg);
+    
+    // Иконка
+    const icon = scene.add.text(25, 40, job.icon, { fontSize: '40px' });
+    icon.setOrigin(0.5);
+    card.add(icon);
+    
+    // Заголовок
+    const title = scene.add.text(60, 10, job.title, {
+        fontSize: '16px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold'
+    });
+    card.add(title);
+    
+    // Описание
+    const desc = scene.add.text(60, 32, job.description, {
+        fontSize: '11px',
+        fontFamily: 'Nunito, Arial',
+        color: '#bdc3c7',
+        wordWrap: { width: 250 }
+    });
+    card.add(desc);
+    
+    // Награда
+    const reward = scene.add.text(60, 65, `💰 Награда: ${formatMoney(job.reward)}`, {
+        fontSize: '14px',
+        fontFamily: 'Nunito, Arial',
+        color: '#2ecc71',
+        fontStyle: 'bold'
+    });
+    card.add(reward);
+    
+    // Риск
+    const riskColors = { 1: '#27ae60', 2: '#f39c12', 3: '#e74c3c' };
+    const risk = scene.add.text(60, 85, `⚠️ Риск: ${job.risk}`, {
+        fontSize: '12px',
+        fontFamily: 'Nunito, Arial',
+        color: riskColors[job.riskLevel]
+    });
+    card.add(risk);
+    
+    // Требование
+    const req = scene.add.text(200, 85, `📋 ${job.requirement}`, {
+        fontSize: '11px',
+        fontFamily: 'Nunito, Arial',
+        color: '#95a5a6'
+    });
+    card.add(req);
+    
+    // Груз и время
+    const details = scene.add.text(320, 15, `⚖️ ${job.cargoWeight}кг\n⏱️ ${job.duration}`, {
+        fontSize: '11px',
+        fontFamily: 'Nunito, Arial',
+        color: '#4fc3f7',
+        align: 'right'
+    });
+    card.add(details);
+    
+    // Кнопка
+    const btnBg = scene.add.graphics();
+    btnBg.fillStyle(isAccepted ? 0xe74c3c : 0x3498db, 1);
+    btnBg.fillRoundedRect(320, 65, 100, 35, 8);
+    card.add(btnBg);
+    
+    const btnText = scene.add.text(370, 82, isAccepted ? 'Отменить' : 'Взять', {
+        fontSize: '14px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold'
+    });
+    btnText.setOrigin(0.5);
+    card.add(btnText);
+    
+    // Интерактивность
+    const btnHit = scene.add.rectangle(370, 82, 100, 35, 0xffffff, 0);
+    btnHit.setInteractive({ useHandCursor: true });
+    card.add(btnHit);
+    
+    btnHit.on('pointerdown', () => {
+        toggleJob(scene, job);
+    });
+    
+    return card;
+}
+
+function toggleJob(scene, job) {
+    const isAccepted = gameState.jobs.includes(job.id);
+    
+    if (isAccepted) {
+        gameState.jobs = gameState.jobs.filter(id => id !== job.id);
+        gameState.cargoUsed -= job.cargoWeight;
+        showNotification(scene, `❌ Отменено: ${job.title}`, '#e74c3c');
+    } else {
+        if (gameState.cargoUsed + job.cargoWeight > GAME_DATA.maxCargoCapacity) {
+            showNotification(scene, '❌ Нет места в трюме для груза!', '#e74c3c');
+            return;
+        }
+        
+        gameState.jobs.push(job.id);
+        gameState.cargoUsed += job.cargoWeight;
+        showNotification(scene, `✅ Принято: ${job.title}`, '#27ae60');
+    }
+    
+    // Перерисовываем
+    closeModal(scene, currentModal);
+    setTimeout(() => openJobsModal(scene), 200);
+}
+
+function getRiskColor(level) {
+    const colors = { 1: 0x27ae60, 2: 0xf39c12, 3: 0xe74c3c };
+    return colors[level] || 0x4fc3f7;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ПРОВЕРКА ГОТОВНОСТИ К ОТПЛЫТИЮ
+// ═══════════════════════════════════════════════════════════════════════════
+
+function checkReadyToDepart(scene) {
+    const problems = [];
+    
+    // Проверка экипажа
+    const requiredCrew = GAME_DATA.crew.filter(m => m.required);
+    requiredCrew.forEach(member => {
+        if (!gameState.crew.includes(member.id)) {
+            problems.push(`Нужен ${member.role}: ${member.name}`);
+        }
+    });
+    
+    if (gameState.crew.length < GAME_DATA.minCrewRequired) {
+        problems.push(`Мало людей в команде (минимум ${GAME_DATA.minCrewRequired})`);
+    }
+    
+    // Проверка еды
+    if (gameState.foodDays < 10) {
+        problems.push('Мало продовольствия (минимум на 10 дней)');
+    }
+    
+    if (problems.length > 0) {
+        showProblemModal(scene, problems);
+    } else {
+        showDepartureModal(scene);
+    }
+}
+
+function showProblemModal(scene, problems) {
+    const modal = createModal(scene, '⚠️ НЕ ГОТОВЫ К ОТПЛЫТИЮ', 600, 400);
+    
+    const intro = scene.add.text(0, -120, 'Для отплытия необходимо:', {
+        fontSize: '16px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff'
+    });
+    intro.setOrigin(0.5);
+    modal.add(intro);
+    
+    problems.forEach((problem, index) => {
+        const text = scene.add.text(-250, -70 + index * 35, `❌ ${problem}`, {
+            fontSize: '14px',
+            fontFamily: 'Nunito, Arial',
+            color: '#e74c3c'
+        });
+        modal.add(text);
+    });
+    
+    // Кнопка "Понятно"
+    const btnBg = scene.add.graphics();
+    btnBg.fillStyle(0x3498db, 1);
+    btnBg.fillRoundedRect(-60, 120, 120, 40, 10);
+    modal.add(btnBg);
+    
+    const btnText = scene.add.text(0, 140, 'Понятно', {
+        fontSize: '16px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold'
+    });
+    btnText.setOrigin(0.5);
+    modal.add(btnText);
+    
+    const btnHit = scene.add.rectangle(0, 140, 120, 40, 0xffffff, 0);
+    btnHit.setInteractive({ useHandCursor: true });
+    btnHit.on('pointerdown', () => closeModal(scene, modal));
+    modal.add(btnHit);
+}
+
+function showDepartureModal(scene) {
+    const modal = createModal(scene, '🚢 ГОТОВЫ К ОТПЛЫТИЮ!', 700, 500);
+    
+    // Сводка
+    const summary = [
+        `💰 Бюджет: ${formatMoney(gameState.money)}`,
+        `🧑‍✈️ Экипаж: ${gameState.crew.length} человек`,
+        `🍞 Продовольствие: на ${gameState.foodDays} дней`,
+        `⚖️ Загрузка: ${gameState.cargoUsed}/${GAME_DATA.maxCargoCapacity} кг`,
+        `💼 Подработки: ${gameState.jobs.length}`
+    ];
+    
+    const expectedReward = gameState.jobs.reduce((sum, jobId) => {
+        const job = GAME_DATA.jobs.find(j => j.id === jobId);
+        return sum + (job ? job.reward : 0);
+    }, 0);
+    
+    if (expectedReward > 0) {
+        summary.push(`💵 Ожидаемый заработок: ${formatMoney(expectedReward)}`);
+    }
+    
+    summary.forEach((line, index) => {
+        const text = scene.add.text(-200, -120 + index * 35, line, {
+            fontSize: '16px',
+            fontFamily: 'Nunito, Arial',
+            color: '#ffffff'
+        });
+        modal.add(text);
+    });
+    
+    // Кнопка отплытия
+    const btnBg = scene.add.graphics();
+    btnBg.fillStyle(0x27ae60, 1);
+    btnBg.fillRoundedRect(-100, 130, 200, 50, 15);
+    modal.add(btnBg);
+    
+    const btnText = scene.add.text(0, 155, '⛵ ОТПЛЫТЬ!', {
+        fontSize: '20px',
+        fontFamily: 'Russo One, Arial',
+        color: '#ffffff'
+    });
+    btnText.setOrigin(0.5);
+    modal.add(btnText);
+    
+    const btnHit = scene.add.rectangle(0, 155, 200, 50, 0xffffff, 0);
+    btnHit.setInteractive({ useHandCursor: true });
+    btnHit.on('pointerdown', () => {
+        // Здесь переход к следующей сцене путешествия
+        closeModal(scene, modal);
+        showNotification(scene, '🚢 Отправляемся в путь! (переход к путешествию...)', '#27ae60');
+        
+        // Сохраняем состояние игры (можно передать в следующую сцену)
+        console.log('🎮 Состояние экспедиции:', gameState);
+        console.log('🎮 Ожидаемый заработок от подработок:', expectedReward);
+    });
+    modal.add(btnHit);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+// ═══════════════════════════════════════════════════════════════════════════
+
+function formatMoney(amount) {
+    return amount.toLocaleString('ru-RU') + ' ₽';
+}
+
+function darkenColor(color, percent) {
+    const r = (color >> 16) & 0xFF;
+    const g = (color >> 8) & 0xFF;
+    const b = color & 0xFF;
+    
+    const factor = (100 - percent) / 100;
+    
+    const newR = Math.floor(r * factor);
+    const newG = Math.floor(g * factor);
+    const newB = Math.floor(b * factor);
+    
+    return (newR << 16) | (newG << 8) | newB;
+}
+
+function getMoraleEmoji() {
+    if (gameState.morale >= 80) return '😊 Отлично';
+    if (gameState.morale >= 60) return '🙂 Хорошо';
+    if (gameState.morale >= 40) return '😐 Нормально';
+    if (gameState.morale >= 20) return '😟 Плохо';
+    return '😢 Ужасно';
+}
+
+function showMoneyAnimation(scene, amount, isPositive) {
+    const color = isPositive ? '#2ecc71' : '#e74c3c';
+    const prefix = isPositive ? '+' : '';
+    
+    const text = scene.add.text(600, 700, `${prefix}${formatMoney(amount)}`, {
+        fontSize: '24px',
+        fontFamily: 'Russo One, Arial',
+        color: color,
+        stroke: '#000000',
+        strokeThickness: 3
+    });
+    text.setOrigin(0.5);
+    text.setDepth(2000);
+    
+    scene.tweens.add({
+        targets: text,
+        y: 600,
+        alpha: 0,
+        duration: 1500,
+        ease: 'Power2',
+        onComplete: () => text.destroy()
+    });
+}
+
+function showNotification(scene, message, color) {
+    const notification = scene.add.container(600, 100);
+    notification.setDepth(2000);
+    
+    const bg = scene.add.graphics();
+    bg.fillStyle(parseInt(color.replace('#', '0x')), 0.95);
+    bg.fillRoundedRect(-200, -25, 400, 50, 10);
+    notification.add(bg);
+    
+    const text = scene.add.text(0, 0, message, {
+        fontSize: '16px',
+        fontFamily: 'Nunito, Arial',
+        color: '#ffffff',
+        fontStyle: 'bold'
+    });
+    text.setOrigin(0.5);
+    notification.add(text);
+    
+    notification.setAlpha(0);
+    notification.y = 50;
+    
+    scene.tweens.add({
+        targets: notification,
+        y: 100,
+        alpha: 1,
+        duration: 300,
+        ease: 'Back.easeOut'
+    });
+    
+    scene.time.delayedCall(2000, () => {
+        scene.tweens.add({
+            targets: notification,
+            y: 50,
+            alpha: 0,
+            duration: 300,
+            ease: 'Back.easeIn',
+            onComplete: () => notification.destroy()
+        });
+    });
+}
+
+function update() {
+    // Обновляем статус панели каждый кадр (или по событиям)
+}
+    </script>
+</body>
+</html>
