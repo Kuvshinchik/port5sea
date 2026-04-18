@@ -675,7 +675,7 @@ function createHUD() {
 function createSeagull(scene) {
     if (hasTexture(scene, 'seagull')) {
         seagullSprite = scene.add.image(500, -50, 'seagull');
-        seagullSprite.setScale(0.5);
+        seagullSprite.setDisplaySize(90, 70);
     } else {
         seagullSprite = scene.add.container(500, -50);
         seagullSprite.add([
@@ -773,12 +773,16 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
     let sprite;
     let points = ZONES[zone].points;
     let hitRadius = 20;
+    let baseScaleX = 1;
+    let baseScaleY = 1;
     
     if (isCrab) {
         // ═══ КРАБ ═══
         if (hasTexture(scene, 'crab')) {
-            sprite = scene.add.image(x, y, 'crab').setScale(0.4);
+            sprite = scene.add.image(x, y, 'crab').setDisplaySize(64, 64);
             hitRadius = 25;
+            baseScaleX = sprite.scaleX;
+            baseScaleY = sprite.scaleY;
         } else {
             // Fallback - используем Graphics для рисования краба
             sprite = scene.add.graphics();
@@ -796,8 +800,10 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
     } else if (isRare) {
         // ═══ РЕДКИЙ МОЛЛЮСК ═══
         if (hasTexture(scene, 'mollusk_rare')) {
-            sprite = scene.add.image(x, y, 'mollusk_rare').setScale(0.5);
+            sprite = scene.add.image(x, y, 'mollusk_rare').setDisplaySize(58, 58);
             hitRadius = 25;
+            baseScaleX = sprite.scaleX;
+            baseScaleY = sprite.scaleY;
         } else {
             // Fallback - золотой круг со свечением
             sprite = scene.add.graphics();
@@ -825,8 +831,10 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
     } else {
         // ═══ ОБЫЧНЫЙ МОЛЛЮСК ═══
         if (hasTexture(scene, 'mollusk_common')) {
-            sprite = scene.add.image(x, y, 'mollusk_common').setScale(0.4);
+            sprite = scene.add.image(x, y, 'mollusk_common').setDisplaySize(52, 52);
             hitRadius = 20;
+            baseScaleX = sprite.scaleX;
+            baseScaleY = sprite.scaleY;
         } else {
             // Fallback - коричневый круг
             const colors = [0x8b4513, 0x654321, 0x3d2914, 0x5d4037, 0x4e342e];
@@ -846,6 +854,8 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
     sprite.setData('collected', false);
     sprite.setData('posX', x);
     sprite.setData('posY', y);
+    sprite.setData('baseScaleX', baseScaleX);
+    sprite.setData('baseScaleY', baseScaleY);
     sprite.setDepth(5);
     
     // ═══ ИНТЕРАКТИВНОСТЬ ═══
@@ -864,10 +874,12 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
     // Визуальная обратная связь при наведении
     sprite.on('pointerover', function() {
         if (!this.getData('collected')) {
+            const hoverScaleX = (this.getData('baseScaleX') || 1) * 1.15;
+            const hoverScaleY = (this.getData('baseScaleY') || 1) * 1.15;
             scene.tweens.add({
                 targets: this,
-                scaleX: (this.scaleX || 1) * 1.15,
-                scaleY: (this.scaleY || 1) * 1.15,
+                scaleX: hoverScaleX,
+                scaleY: hoverScaleY,
                 duration: 100
             });
         }
@@ -877,8 +889,8 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
         if (!this.getData('collected')) {
             scene.tweens.add({
                 targets: this,
-                scaleX: this.getData('type') === 'rare' ? 1 : 1,
-                scaleY: this.getData('type') === 'rare' ? 1 : 1,
+                scaleX: this.getData('baseScaleX') || 1,
+                scaleY: this.getData('baseScaleY') || 1,
                 duration: 100
             });
         }
@@ -907,8 +919,8 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
     sprite.setAlpha(1);
     scene.tweens.add({
         targets: sprite,
-        scaleX: 1,
-        scaleY: 1,
+        scaleX: sprite.getData('baseScaleX') || 1,
+        scaleY: sprite.getData('baseScaleY') || 1,
         duration: 200,
         ease: 'Back.easeOut'
     });
