@@ -118,7 +118,7 @@
                                     <li class="menu-list-item nav-item">
                                         <a class="nav-link" href="#contact">Контакты</a>
                                     </li>
-									{{--dd(auth()->user()->name);		
+									{{--dd(auth()->user()->name);		--}}
 							@if ( auth()->user() )
 									<li class="menu-list-item nav-item">
                                         <a href="{{ route('logout') }}" class="nav-link onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Выход</a>
@@ -126,8 +126,8 @@
                                     </li>
 							@endif	
 							
-							@if ( auth()->user() )--}}
-					{{--				<li class="menu-list-item nav-item">
+							@if ( auth()->user() )
+								<li class="menu-list-item nav-item">
                                         <a href="{{ route('ship_game.index') }}" class="nav-link">Игра</a>
 										
                                     </li>
@@ -136,7 +136,7 @@
 										
                                     </li>
 									
-							@endif--}}
+							@endif
 							
                                 </ul>
                             </nav>
