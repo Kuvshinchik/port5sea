@@ -753,12 +753,30 @@ function spawnMollusks() {
         const zone = ZONES[zoneKey];
         const x = Phaser.Math.Between(50, 950);
         const y = Phaser.Math.Between(zone.yStart + 30, zone.yEnd - 30);
-        const rareChance = zoneKey === 'far' ? (HAS_SEAGULL ? 0.4 : 0.25) : 0.1;
-        const isRare = Math.random() < rareChance;
-        const isCrab = Math.random() < 0.1;
+        const weights = getSpawnWeights(zoneKey);
+        const roll = Math.random();
+        const isCrab = roll < weights.crab;
+        const isRare = !isCrab && roll < (weights.crab + weights.rare);
         
         createMollusk(gameScene, x, y, zoneKey, isRare, isCrab);
     }
+}
+
+function getSpawnWeights(zoneKey) {
+    const baseWeights = {
+        far: { crab: 0.15, rare: 0.45 },
+        middle: { crab: 0.15, rare: 0.35 },
+        near: { crab: 0.15, rare: 0.25 }
+    };
+
+    const weights = { ...(baseWeights[zoneKey] || baseWeights.middle) };
+
+    if (HAS_SEAGULL && zoneKey === 'far') {
+        weights.rare = 0.55;
+        weights.crab = 0.10;
+    }
+
+    return weights;
 }
 
 function getAvailableZones() {
@@ -792,7 +810,6 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
             sprite.fillStyle(0xe74c3c, 1);
             sprite.fillCircle(0, 0, 18);    // тело
             sprite.setPosition(x, y);
-            hitRadius = 25;
         }
         sprite.setData('type', 'crab');
         points = -10;
@@ -812,7 +829,6 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
             sprite.fillStyle(0xffd700, 1);
             sprite.fillCircle(0, 0, 22); // тело
             sprite.setPosition(x, y);
-            hitRadius = 28;
             
             // Пульсация
             scene.tweens.add({
@@ -843,7 +859,6 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
             sprite.fillStyle(color, 1);
             sprite.fillCircle(0, 0, 15);
             sprite.setPosition(x, y);
-            hitRadius = 18;
         }
         sprite.setData('type', 'common');
     }
@@ -859,9 +874,8 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
     sprite.setDepth(5);
     
     // ═══ ИНТЕРАКТИВНОСТЬ ═══
-    // Используем круговую hitArea для всех типов объектов
-    const hitArea = new Phaser.Geom.Circle(0, 0, hitRadius);
-    sprite.setInteractive(hitArea, Phaser.Geom.Circle.Contains);
+    // Используем стандартную hit area Phaser, чтобы корректно работать с любым размером текстур
+    sprite.setInteractive({ useHandCursor: true });
     scene.input.setDefaultCursor('pointer');
     
     // Обработчик клика
