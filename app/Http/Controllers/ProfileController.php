@@ -1,6 +1,9 @@
 <?php
 namespace App\Http\Controllers;
+
+use App\Models\UserPrizePoint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
@@ -11,6 +14,13 @@ class ProfileController extends Controller
 
     public function index()
     {
-        return view('profile');  // Рендерит profile.blade.php
+        $user = Auth::user();
+
+        $prizePoints = UserPrizePoint::firstOrCreate(
+            ['user_id' => $user->id],
+            ['balance' => 0]
+        );
+
+        return view('profile', compact('prizePoints'));  // Рендерит profile.blade.php
     }
 }
