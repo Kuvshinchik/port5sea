@@ -476,10 +476,15 @@ let gameTimer = null;
 let spawnTimer = null;
 let seagullTimer = null;
 
+const SCENE_HEIGHT = 600;
+const SPAWN_TOP_OFFSET = Math.round(SCENE_HEIGHT * 0.25); // верхняя четверть — небо, спавн отключен
+const PLAYABLE_HEIGHT = SCENE_HEIGHT - SPAWN_TOP_OFFSET;
+const ZONE_HEIGHT = Math.floor(PLAYABLE_HEIGHT / 3);
+
 const ZONES = {
-    far: { yStart: 0, yEnd: 200, points: GAME_CONFIG.pointsFarZone, spawnChance: 0.15 },
-    middle: { yStart: 200, yEnd: 400, points: GAME_CONFIG.pointsMiddleZone, spawnChance: 0.3 },
-    near: { yStart: 400, yEnd: 600, points: GAME_CONFIG.pointsNearZone, spawnChance: 0.55 }
+    far: { yStart: SPAWN_TOP_OFFSET, yEnd: SPAWN_TOP_OFFSET + ZONE_HEIGHT, points: GAME_CONFIG.pointsFarZone, spawnChance: 0.15 },
+    middle: { yStart: SPAWN_TOP_OFFSET + ZONE_HEIGHT, yEnd: SPAWN_TOP_OFFSET + ZONE_HEIGHT * 2, points: GAME_CONFIG.pointsMiddleZone, spawnChance: 0.3 },
+    near: { yStart: SPAWN_TOP_OFFSET + ZONE_HEIGHT * 2, yEnd: SCENE_HEIGHT, points: GAME_CONFIG.pointsNearZone, spawnChance: 0.55 }
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -612,13 +617,13 @@ function drawFallbackBackground(scene, tideLevel) {
 }
 
 function createZoneOverlay(scene) {
-    scene.add.line(500, 200, 0, 0, 1000, 0, 0xffffff, 0.3).setDepth(10);
-    scene.add.line(500, 400, 0, 0, 1000, 0, 0xffffff, 0.3).setDepth(10);
+    scene.add.line(500, ZONES.middle.yStart, 0, 0, 1000, 0, 0xffffff, 0.3).setDepth(10);
+    scene.add.line(500, ZONES.near.yStart, 0, 0, 1000, 0, 0xffffff, 0.3).setDepth(10);
     
     const labels = [
-        { text: '🔴 ДАЛЬНЯЯ (×3)', y: 10, color: '#ff6b6b' },
-        { text: '🟡 СРЕДНЯЯ (×2)', y: 210, color: '#ffd93d' },
-        { text: '🟢 БЛИЖНЯЯ (×1)', y: 410, color: '#6bcb77' }
+        { text: '🔴 ДАЛЬНЯЯ (×3)', y: ZONES.far.yStart + 10, color: '#ff6b6b' },
+        { text: '🟡 СРЕДНЯЯ (×2)', y: ZONES.middle.yStart + 10, color: '#ffd93d' },
+        { text: '🟢 БЛИЖНЯЯ (×1)', y: ZONES.near.yStart + 10, color: '#6bcb77' }
     ];
     
     labels.forEach(l => {
