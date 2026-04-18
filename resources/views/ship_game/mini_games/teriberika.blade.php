@@ -476,10 +476,15 @@ let gameTimer = null;
 let spawnTimer = null;
 let seagullTimer = null;
 
+const SCENE_HEIGHT = 600;
+const SPAWN_TOP_OFFSET = Math.round(SCENE_HEIGHT * 0.25); // верхняя четверть — небо, спавн отключен
+const PLAYABLE_HEIGHT = SCENE_HEIGHT - SPAWN_TOP_OFFSET;
+const ZONE_HEIGHT = Math.floor(PLAYABLE_HEIGHT / 3);
+
 const ZONES = {
-    far: { yStart: 0, yEnd: 200, points: GAME_CONFIG.pointsFarZone, spawnChance: 0.15 },
-    middle: { yStart: 200, yEnd: 400, points: GAME_CONFIG.pointsMiddleZone, spawnChance: 0.3 },
-    near: { yStart: 400, yEnd: 600, points: GAME_CONFIG.pointsNearZone, spawnChance: 0.55 }
+    far: { yStart: SPAWN_TOP_OFFSET, yEnd: SPAWN_TOP_OFFSET + ZONE_HEIGHT, points: GAME_CONFIG.pointsFarZone, spawnChance: 0.15 },
+    middle: { yStart: SPAWN_TOP_OFFSET + ZONE_HEIGHT, yEnd: SPAWN_TOP_OFFSET + ZONE_HEIGHT * 2, points: GAME_CONFIG.pointsMiddleZone, spawnChance: 0.3 },
+    near: { yStart: SPAWN_TOP_OFFSET + ZONE_HEIGHT * 2, yEnd: SCENE_HEIGHT, points: GAME_CONFIG.pointsNearZone, spawnChance: 0.55 }
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -612,13 +617,13 @@ function drawFallbackBackground(scene, tideLevel) {
 }
 
 function createZoneOverlay(scene) {
-    scene.add.line(500, 200, 0, 0, 1000, 0, 0xffffff, 0.3).setDepth(10);
-    scene.add.line(500, 400, 0, 0, 1000, 0, 0xffffff, 0.3).setDepth(10);
+    scene.add.line(500, ZONES.middle.yStart, 0, 0, 1000, 0, 0xffffff, 0.3).setDepth(10);
+    scene.add.line(500, ZONES.near.yStart, 0, 0, 1000, 0, 0xffffff, 0.3).setDepth(10);
     
     const labels = [
-        { text: '🔴 ДАЛЬНЯЯ (×3)', y: 10, color: '#ff6b6b' },
-        { text: '🟡 СРЕДНЯЯ (×2)', y: 210, color: '#ffd93d' },
-        { text: '🟢 БЛИЖНЯЯ (×1)', y: 410, color: '#6bcb77' }
+        { text: '🔴 ДАЛЬНЯЯ (×3)', y: ZONES.far.yStart + 10, color: '#ff6b6b' },
+        { text: '🟡 СРЕДНЯЯ (×2)', y: ZONES.middle.yStart + 10, color: '#ffd93d' },
+        { text: '🟢 БЛИЖНЯЯ (×1)', y: ZONES.near.yStart + 10, color: '#6bcb77' }
     ];
     
     labels.forEach(l => {
@@ -670,7 +675,7 @@ function createHUD() {
 function createSeagull(scene) {
     if (hasTexture(scene, 'seagull')) {
         seagullSprite = scene.add.image(500, -50, 'seagull');
-        seagullSprite.setScale(0.5);
+        seagullSprite.setDisplaySize(90, 70);
     } else {
         seagullSprite = scene.add.container(500, -50);
         seagullSprite.add([
@@ -768,12 +773,16 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
     let sprite;
     let points = ZONES[zone].points;
     let hitRadius = 20;
+    let baseScaleX = 1;
+    let baseScaleY = 1;
     
     if (isCrab) {
         // ═══ КРАБ ═══
         if (hasTexture(scene, 'crab')) {
-            sprite = scene.add.image(x, y, 'crab').setScale(0.4);
+            sprite = scene.add.image(x, y, 'crab').setDisplaySize(64, 64);
             hitRadius = 25;
+            baseScaleX = sprite.scaleX;
+            baseScaleY = sprite.scaleY;
         } else {
             // Fallback - используем Graphics для рисования краба
             sprite = scene.add.graphics();
@@ -791,8 +800,10 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
     } else if (isRare) {
         // ═══ РЕДКИЙ МОЛЛЮСК ═══
         if (hasTexture(scene, 'mollusk_rare')) {
-            sprite = scene.add.image(x, y, 'mollusk_rare').setScale(0.5);
+            sprite = scene.add.image(x, y, 'mollusk_rare').setDisplaySize(58, 58);
             hitRadius = 25;
+            baseScaleX = sprite.scaleX;
+            baseScaleY = sprite.scaleY;
         } else {
             // Fallback - золотой круг со свечением
             sprite = scene.add.graphics();
@@ -820,8 +831,10 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
     } else {
         // ═══ ОБЫЧНЫЙ МОЛЛЮСК ═══
         if (hasTexture(scene, 'mollusk_common')) {
-            sprite = scene.add.image(x, y, 'mollusk_common').setScale(0.4);
+            sprite = scene.add.image(x, y, 'mollusk_common').setDisplaySize(52, 52);
             hitRadius = 20;
+            baseScaleX = sprite.scaleX;
+            baseScaleY = sprite.scaleY;
         } else {
             // Fallback - коричневый круг
             const colors = [0x8b4513, 0x654321, 0x3d2914, 0x5d4037, 0x4e342e];
@@ -841,6 +854,8 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
     sprite.setData('collected', false);
     sprite.setData('posX', x);
     sprite.setData('posY', y);
+    sprite.setData('baseScaleX', baseScaleX);
+    sprite.setData('baseScaleY', baseScaleY);
     sprite.setDepth(5);
     
     // ═══ ИНТЕРАКТИВНОСТЬ ═══
@@ -859,10 +874,12 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
     // Визуальная обратная связь при наведении
     sprite.on('pointerover', function() {
         if (!this.getData('collected')) {
+            const hoverScaleX = (this.getData('baseScaleX') || 1) * 1.15;
+            const hoverScaleY = (this.getData('baseScaleY') || 1) * 1.15;
             scene.tweens.add({
                 targets: this,
-                scaleX: (this.scaleX || 1) * 1.15,
-                scaleY: (this.scaleY || 1) * 1.15,
+                scaleX: hoverScaleX,
+                scaleY: hoverScaleY,
                 duration: 100
             });
         }
@@ -872,8 +889,8 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
         if (!this.getData('collected')) {
             scene.tweens.add({
                 targets: this,
-                scaleX: this.getData('type') === 'rare' ? 1 : 1,
-                scaleY: this.getData('type') === 'rare' ? 1 : 1,
+                scaleX: this.getData('baseScaleX') || 1,
+                scaleY: this.getData('baseScaleY') || 1,
                 duration: 100
             });
         }
@@ -902,8 +919,8 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
     sprite.setAlpha(1);
     scene.tweens.add({
         targets: sprite,
-        scaleX: 1,
-        scaleY: 1,
+        scaleX: sprite.getData('baseScaleX') || 1,
+        scaleY: sprite.getData('baseScaleY') || 1,
         duration: 200,
         ease: 'Back.easeOut'
     });
