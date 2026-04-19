@@ -119,6 +119,11 @@
                                         <a class="nav-link" href="#contact">Контакты</a>
                                     </li>
 									{{--dd(auth()->user()->name);		--}}
+							@guest
+									<li class="menu-list-item nav-item">
+                                        <a href="{{ route('login') }}" class="nav-link">Войти</a>
+                                    </li>
+							@endguest
 							@if ( auth()->user() )
 									<li class="menu-list-item nav-item">
                                         <a href="{{ route('logout') }}" class="nav-link onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Выход</a>
