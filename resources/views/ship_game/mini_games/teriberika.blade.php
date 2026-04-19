@@ -477,7 +477,7 @@ let spawnTimer = null;
 let seagullTimer = null;
 
 const SCENE_HEIGHT = 600;
-const SPAWN_TOP_OFFSET = Math.round(SCENE_HEIGHT * 0.25); // верхняя четверть — небо, спавн отключен
+const SPAWN_TOP_OFFSET = Math.round(SCENE_HEIGHT * 0.33); // верхняя четверть — небо, спавн отключен
 const PLAYABLE_HEIGHT = SCENE_HEIGHT - SPAWN_TOP_OFFSET;
 const ZONE_HEIGHT = Math.floor(PLAYABLE_HEIGHT / 3);
 
