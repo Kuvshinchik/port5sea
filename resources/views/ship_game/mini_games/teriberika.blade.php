@@ -477,7 +477,7 @@ let spawnTimer = null;
 let seagullTimer = null;
 
 const SCENE_HEIGHT = 600;
-const SPAWN_TOP_OFFSET = Math.round(SCENE_HEIGHT * 0.33); // верхняя треть — небо, спавн отключен
+const SPAWN_TOP_OFFSET = Math.round(SCENE_HEIGHT * 0.25); // верхняя четверть — небо, спавн отключен
 const PLAYABLE_HEIGHT = SCENE_HEIGHT - SPAWN_TOP_OFFSET;
 const ZONE_HEIGHT = Math.floor(PLAYABLE_HEIGHT / 3);
 
@@ -790,6 +790,7 @@ function getAvailableZones() {
 function createMollusk(scene, x, y, zone, isRare, isCrab) {
     let sprite;
     let points = ZONES[zone].points;
+    let hitRadius = 20;
     let baseScaleX = 1;
     let baseScaleY = 1;
     
@@ -797,6 +798,7 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
         // ═══ КРАБ ═══
         if (hasTexture(scene, 'crab')) {
             sprite = scene.add.image(x, y, 'crab').setDisplaySize(64, 64);
+            hitRadius = 25;
             baseScaleX = sprite.scaleX;
             baseScaleY = sprite.scaleY;
         } else {
@@ -816,6 +818,7 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
         // ═══ РЕДКИЙ МОЛЛЮСК ═══
         if (hasTexture(scene, 'mollusk_rare')) {
             sprite = scene.add.image(x, y, 'mollusk_rare').setDisplaySize(58, 58);
+            hitRadius = 25;
             baseScaleX = sprite.scaleX;
             baseScaleY = sprite.scaleY;
         } else {
@@ -845,6 +848,7 @@ function createMollusk(scene, x, y, zone, isRare, isCrab) {
         // ═══ ОБЫЧНЫЙ МОЛЛЮСК ═══
         if (hasTexture(scene, 'mollusk_common')) {
             sprite = scene.add.image(x, y, 'mollusk_common').setDisplaySize(52, 52);
+            hitRadius = 20;
             baseScaleX = sprite.scaleX;
             baseScaleY = sprite.scaleY;
         } else {
