@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\ShipGame\MiniGames;
+namespace App\Http\Controllers\ShipGame\MiniGames\Stops\Teriberka;
 
 use App\Http\Controllers\Controller;
 use App\Models\GameProgress;

@@ -3,7 +3,8 @@
 use App\Http\Controllers\ShipGameController;
 use App\Http\Controllers\GameDebugController;
 use App\Http\Controllers\QrCodeController;
-use App\Http\Controllers\ShipGame\MiniGames\TeriberkaMiniGameController;
+use App\Http\Controllers\ShipGame\MiniGames\Stops\KaninCape\KaninCapeController;
+use App\Http\Controllers\ShipGame\MiniGames\Stops\Teriberka\TeriberkaMiniGameController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,6 +42,13 @@ Route::middleware('auth')->prefix('ship-game')->name('ship_game.')->group(functi
         Route::post('/start', [TeriberkaMiniGameController::class, 'startGame'])->name('start');
         Route::post('/submit', [TeriberkaMiniGameController::class, 'submitResult'])->name('submit');
         Route::get('/leaderboard', [TeriberkaMiniGameController::class, 'leaderboard'])->name('leaderboard');
+    });
+
+    // Канин мыс - Пазл (этап 1: маршрутизация и API-заглушки)
+    Route::prefix('kanin-cape')->name('kanin_cape.')->group(function () {
+        Route::get('/', [KaninCapeController::class, 'index'])->name('index');
+        Route::post('/progress', [KaninCapeController::class, 'saveStageProgress'])->name('progress');
+        Route::post('/complete', [KaninCapeController::class, 'complete'])->name('complete');
     });
     
     // Здесь можно добавить другие мини-игры:
