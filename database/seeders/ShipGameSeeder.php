@@ -179,17 +179,18 @@ class ShipGameSeeder extends Seeder
         // ОСТАНОВКИ МАРШРУТА
         // ═══════════════════════════════════════════════════════════════════
         $routeStops = [
-            ['order_index' => 0, 'name' => 'Мурманск', 'x_coord' => 625, 'y_coord' => 462, 'is_stop' => true, 'level_number' => 1, 'salary_days' => 0],
-            ['order_index' => 1, 'name' => 'Переход', 'x_coord' => 639, 'y_coord' => 441, 'is_stop' => false, 'level_number' => null, 'salary_days' => 0],
-            ['order_index' => 2, 'name' => 'Териберка', 'x_coord' => 680, 'y_coord' => 466, 'is_stop' => true, 'level_number' => 2, 'salary_days' => 1],
-            ['order_index' => 3, 'name' => 'Мыс Надежда', 'x_coord' => 751, 'y_coord' => 478, 'is_stop' => true, 'level_number' => 3, 'salary_days' => 1],
-            ['order_index' => 4, 'name' => 'Остров Моржовский', 'x_coord' => 758, 'y_coord' => 534, 'is_stop' => true, 'level_number' => 4, 'salary_days' => 1],
-            ['order_index' => 5, 'name' => 'Соловецкие острова', 'x_coord' => 664, 'y_coord' => 594, 'is_stop' => true, 'level_number' => 5, 'salary_days' => 2],
-            ['order_index' => 6, 'name' => 'Переход', 'x_coord' => 631, 'y_coord' => 540, 'is_stop' => false, 'level_number' => null, 'salary_days' => 0],
-            ['order_index' => 7, 'name' => 'Кандалакша', 'x_coord' => 615, 'y_coord' => 525, 'is_stop' => true, 'level_number' => 6, 'salary_days' => 1],
-            ['order_index' => 8, 'name' => 'Переход', 'x_coord' => 631, 'y_coord' => 540, 'is_stop' => false, 'level_number' => null, 'salary_days' => 0],
-            ['order_index' => 9, 'name' => 'Переход', 'x_coord' => 694, 'y_coord' => 576, 'is_stop' => false, 'level_number' => null, 'salary_days' => 0],
-            ['order_index' => 10, 'name' => 'Архангельск', 'x_coord' => 738, 'y_coord' => 612, 'is_stop' => true, 'level_number' => 7, 'salary_days' => 2],
+            ['order_index' => 0, 'name' => 'Мурманск', 'slug' => 'murmansk-port', 'icon_slug' => 'port', 'x_coord' => 625, 'y_coord' => 462, 'is_stop' => true, 'level_number' => 1, 'salary_days' => 0],
+            ['order_index' => 1, 'name' => 'Переход', 'slug' => 'transition-1', 'icon_slug' => null, 'x_coord' => 639, 'y_coord' => 441, 'is_stop' => false, 'level_number' => null, 'salary_days' => 0],
+            ['order_index' => 2, 'name' => 'Териберка', 'slug' => 'teriberika', 'icon_slug' => 'mollusk', 'x_coord' => 680, 'y_coord' => 466, 'is_stop' => true, 'level_number' => 2, 'salary_days' => 1],
+            ['order_index' => 3, 'name' => 'Канин мыс', 'slug' => 'kanin-cape', 'icon_slug' => 'light-keeper', 'x_coord' => 716, 'y_coord' => 470, 'is_stop' => true, 'level_number' => 3, 'salary_days' => 1],
+            ['order_index' => 4, 'name' => 'Мыс Надежда', 'slug' => 'cape-hope', 'icon_slug' => 'expedition', 'x_coord' => 751, 'y_coord' => 478, 'is_stop' => true, 'level_number' => 4, 'salary_days' => 1],
+            ['order_index' => 5, 'name' => 'Остров Моржовский', 'slug' => 'walrus-island', 'icon_slug' => 'walrus', 'x_coord' => 758, 'y_coord' => 534, 'is_stop' => true, 'level_number' => 5, 'salary_days' => 1],
+            ['order_index' => 6, 'name' => 'Соловецкие острова', 'slug' => 'solovki-islands', 'icon_slug' => 'islands', 'x_coord' => 664, 'y_coord' => 594, 'is_stop' => true, 'level_number' => 6, 'salary_days' => 2],
+            ['order_index' => 7, 'name' => 'Переход', 'slug' => 'transition-2', 'icon_slug' => null, 'x_coord' => 631, 'y_coord' => 540, 'is_stop' => false, 'level_number' => null, 'salary_days' => 0],
+            ['order_index' => 8, 'name' => 'Кандалакша', 'slug' => 'kandalaksha', 'icon_slug' => 'harbor', 'x_coord' => 615, 'y_coord' => 525, 'is_stop' => true, 'level_number' => 7, 'salary_days' => 1],
+            ['order_index' => 9, 'name' => 'Переход', 'slug' => 'transition-3', 'icon_slug' => null, 'x_coord' => 631, 'y_coord' => 540, 'is_stop' => false, 'level_number' => null, 'salary_days' => 0],
+            ['order_index' => 10, 'name' => 'Переход', 'slug' => 'transition-4', 'icon_slug' => null, 'x_coord' => 694, 'y_coord' => 576, 'is_stop' => false, 'level_number' => null, 'salary_days' => 0],
+            ['order_index' => 11, 'name' => 'Архангельск', 'slug' => 'arkhangelsk', 'icon_slug' => 'city', 'x_coord' => 738, 'y_coord' => 612, 'is_stop' => true, 'level_number' => 8, 'salary_days' => 2],
         ];
 
         foreach ($routeStops as $stop) {

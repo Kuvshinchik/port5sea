@@ -10,6 +10,8 @@ class RouteStop extends Model
     protected $fillable = [
         'order_index',
         'name',
+        'slug',
+        'icon_slug',
         'x_coord',
         'y_coord',
         'is_stop',
@@ -42,6 +44,8 @@ class RouteStop extends Model
                     'y' => $stop->y_coord,
                     'isStop' => $stop->is_stop,
                     'name' => $stop->name,
+                    'slug' => $stop->slug,
+                    'iconSlug' => $stop->icon_slug,
                     'level' => $stop->level_number,
                     'salaryDays' => $stop->salary_days,
                 ];
