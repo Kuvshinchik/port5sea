@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Мар 02 2026 г., 19:22
+-- Время создания: Апр 23 2026 г., 15:32
 -- Версия сервера: 10.4.19-MariaDB
 -- Версия PHP: 8.0.8
 
@@ -330,7 +330,38 @@ INSERT INTO `game_event_logs` (`id`, `game_progress_id`, `event_type`, `descript
 (99, 3, 'earn', 'Награда за сбор моллюсков', '{\"amount\":8600}', 8600, '2026-02-01 13:55:23', '2026-02-01 13:55:23'),
 (100, 3, 'mini_game_complete', 'Мини-игра пройдена успешно!', '{\"score\":860,\"food_bonus\":5,\"money_bonus\":8600}', 0, '2026-02-01 13:55:23', '2026-02-01 13:55:23'),
 (101, 3, 'mini_game_start', 'Начата мини-игра: Сбор моллюсков в Териберке', '{\"mini_game_id\":9}', 0, '2026-02-01 14:01:16', '2026-02-01 14:01:16'),
-(102, 3, 'mini_game_failed', 'Мини-игра не пройдена', '{\"score\":0,\"mollusks\":0,\"required\":15}', 0, '2026-02-01 14:02:16', '2026-02-01 14:02:16');
+(102, 3, 'mini_game_failed', 'Мини-игра не пройдена', '{\"score\":0,\"mollusks\":0,\"required\":15}', 0, '2026-02-01 14:02:16', '2026-02-01 14:02:16'),
+(103, 3, 'mini_game_start', 'Начата мини-игра: Сбор моллюсков в Териберке', '{\"mini_game_id\":10}', 0, '2026-04-18 13:06:51', '2026-04-18 13:06:51'),
+(104, 3, 'earn', 'Награда за сбор моллюсков', '{\"amount\":10200}', 10200, '2026-04-18 13:07:51', '2026-04-18 13:07:51'),
+(105, 3, 'mini_game_complete', 'Мини-игра пройдена успешно!', '{\"score\":1020,\"food_bonus\":5,\"money_bonus\":10200}', 0, '2026-04-18 13:07:51', '2026-04-18 13:07:51'),
+(106, 3, 'debug_teleport', 'Отладка: телепорт к остановке «Мурманск»', '[]', 0, '2026-04-18 13:45:44', '2026-04-18 13:45:44'),
+(107, 3, 'spend', 'Выплата зарплаты экипажу', '{\"amount\":8800}', -8800, '2026-04-18 13:46:06', '2026-04-18 13:46:06'),
+(108, 3, 'mini_game_start', 'Начата мини-игра: Сбор моллюсков в Териберке', '{\"mini_game_id\":11}', 0, '2026-04-18 13:50:35', '2026-04-18 13:50:35'),
+(109, 3, 'earn', 'Награда за сбор моллюсков', '{\"amount\":7500}', 7500, '2026-04-18 13:51:35', '2026-04-18 13:51:35'),
+(110, 3, 'mini_game_complete', 'Мини-игра пройдена успешно!', '{\"score\":750,\"food_bonus\":5,\"money_bonus\":7500}', 0, '2026-04-18 13:51:35', '2026-04-18 13:51:35'),
+(111, 3, 'mini_game_start', 'Начата мини-игра: Сбор моллюсков в Териберке', '{\"mini_game_id\":12}', 0, '2026-04-18 14:14:50', '2026-04-18 14:14:50'),
+(112, 3, 'earn', 'Награда за сбор моллюсков', '{\"amount\":10800}', 10800, '2026-04-18 14:15:51', '2026-04-18 14:15:51'),
+(113, 3, 'mini_game_complete', 'Мини-игра пройдена успешно!', '{\"score\":1080,\"food_bonus\":5,\"money_bonus\":10800}', 0, '2026-04-18 14:15:51', '2026-04-18 14:15:51'),
+(114, 3, 'mini_game_start', 'Начата мини-игра: Сбор моллюсков в Териберке', '{\"mini_game_id\":13}', 0, '2026-04-18 14:52:03', '2026-04-18 14:52:03'),
+(115, 3, 'mini_game_failed', 'Мини-игра не пройдена', '{\"score\":0,\"mollusks\":0,\"required\":15}', 0, '2026-04-18 14:53:03', '2026-04-18 14:53:03'),
+(116, 3, 'mini_game_start', 'Начата мини-игра: Сбор моллюсков в Териберке', '{\"mini_game_id\":14}', 0, '2026-04-18 15:02:55', '2026-04-18 15:02:55'),
+(117, 3, 'mini_game_failed', 'Мини-игра не пройдена', '{\"score\":0,\"mollusks\":0,\"required\":15}', 0, '2026-04-18 15:03:55', '2026-04-18 15:03:55'),
+(118, 3, 'mini_game_start', 'Начата мини-игра: Сбор моллюсков в Териберке', '{\"mini_game_id\":15}', 0, '2026-04-18 15:26:03', '2026-04-18 15:26:03'),
+(119, 3, 'earn', 'Награда за сбор моллюсков', '{\"amount\":13200}', 13200, '2026-04-18 15:27:03', '2026-04-18 15:27:03'),
+(120, 3, 'mini_game_complete', 'Мини-игра пройдена успешно!', '{\"score\":1320,\"food_bonus\":5,\"money_bonus\":13200}', 0, '2026-04-18 15:27:03', '2026-04-18 15:27:03'),
+(121, 3, 'mini_game_start', 'Начата мини-игра: Сбор моллюсков в Териберке', '{\"mini_game_id\":16}', 0, '2026-04-19 10:58:48', '2026-04-19 10:58:48'),
+(122, 3, 'mini_game_failed', 'Мини-игра не пройдена', '{\"score\":0,\"mollusks\":0,\"required\":15}', 0, '2026-04-19 10:59:49', '2026-04-19 10:59:49'),
+(123, 3, 'mini_game_start', 'Начата мини-игра: Сбор моллюсков в Териберке', '{\"mini_game_id\":17}', 0, '2026-04-19 11:01:20', '2026-04-19 11:01:20'),
+(124, 3, 'mini_game_start', 'Начата мини-игра: Сбор моллюсков в Териберке', '{\"mini_game_id\":18}', 0, '2026-04-19 11:21:16', '2026-04-19 11:21:16'),
+(125, 3, 'earn', 'Награда за сбор моллюсков', '{\"amount\":17600}', 17600, '2026-04-19 11:22:17', '2026-04-19 11:22:17'),
+(126, 3, 'mini_game_complete', 'Мини-игра пройдена успешно!', '{\"score\":1760,\"food_bonus\":5,\"money_bonus\":17600}', 0, '2026-04-19 11:22:17', '2026-04-19 11:22:17'),
+(127, 3, 'spend', 'Выплата зарплаты экипажу', '{\"amount\":8800}', -8800, '2026-04-20 15:49:52', '2026-04-20 15:49:52'),
+(128, 3, 'spend', 'Выплата зарплаты экипажу', '{\"amount\":8800}', -8800, '2026-04-20 15:51:57', '2026-04-20 15:51:57'),
+(129, 3, 'spend', 'Выплата зарплаты экипажу', '{\"amount\":8800}', -8800, '2026-04-20 15:52:04', '2026-04-20 15:52:04'),
+(130, 3, 'spend', 'Выплата зарплаты экипажу', '{\"amount\":8800}', -8800, '2026-04-20 15:52:04', '2026-04-20 15:52:04'),
+(131, 3, 'spend', 'Выплата зарплаты экипажу', '{\"amount\":8800}', -8800, '2026-04-20 15:52:15', '2026-04-20 15:52:15'),
+(132, 3, 'spend', 'Выплата зарплаты экипажу', '{\"amount\":8800}', -8800, '2026-04-20 15:52:22', '2026-04-20 15:52:22'),
+(133, 3, 'spend', 'Выплата зарплаты экипажу', '{\"amount\":8800}', -8800, '2026-04-20 15:52:22', '2026-04-20 15:52:22');
 
 -- --------------------------------------------------------
 
@@ -384,7 +415,7 @@ CREATE TABLE `game_progress` (
 --
 
 INSERT INTO `game_progress` (`id`, `user_id`, `route_segment`, `current_stop_id`, `current_point_index`, `game_phase`, `money`, `food_days`, `fuel_percent`, `cargo_used`, `cargo_capacity`, `morale`, `total_earned`, `total_spent`, `days_traveled`, `is_active`, `started_at`, `completed_at`, `created_at`, `updated_at`) VALUES
-(3, 1, 'murmansk_anadyr', 3, 2, 'at_stop', 239700, 38, 100, 59, 100, 100, 49300, 59600, 2, 1, '2026-01-27 13:40:43', NULL, '2026-01-27 13:40:43', '2026-02-01 13:55:23');
+(3, 1, 'murmansk_anadyr', 11, 10, 'completed', 228600, 63, 100, 59, 100, 100, 108600, 130000, 10, 1, '2026-01-27 13:40:43', '2026-04-23 08:01:43', '2026-01-27 13:40:43', '2026-04-23 08:01:43');
 
 -- --------------------------------------------------------
 
@@ -420,6 +451,25 @@ INSERT INTO `job_offers` (`id`, `code`, `title`, `icon`, `description`, `reward`
 (3, 'job3', 'Установка буёв', '📡', 'Установить навигационный буй в точке маршрута', 15000, 'low', 1, 'Нужен водолаз', 5, '+ 0.5 дня', NULL, 1, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
 (4, 'job4', 'Перевозка учёных', '🔬', 'Взять на борт группу исследователей до острова Диксон', 35000, 'low', 1, 'Свободные каюты', 0, '+ 2 дня остановка', NULL, 1, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
 (5, 'job5', 'Срочная почта', '✉️', 'Доставить важные документы на остров Врангеля', 20000, 'high', 3, 'Быстрый корабль', 1, 'Срок ограничен!', NULL, 1, '2026-01-26 13:16:53', '2026-01-26 13:16:53');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `kanin_cape_results`
+--
+
+CREATE TABLE `kanin_cape_results` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `game_progress_id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `stage_reached` tinyint(3) UNSIGNED NOT NULL DEFAULT 1,
+  `score` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `time_spent` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `is_completed` tinyint(1) NOT NULL DEFAULT 0,
+  `completed_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -482,7 +532,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (8, '2026_01_13_175302_create_user_prize_points_table', 4),
 (9, '2026_01_26_000001_create_ship_game_tables', 5),
 (10, '2024_01_15_000001_create_teriberika_mini_game_results_table', 6),
-(11, '2024_02_09_create_payments_table', 7);
+(11, '2024_02_09_create_payments_table', 7),
+(12, '2026_04_20_000001_create_kanin_cape_results_table', 8),
+(13, '2026_04_20_000002_add_slug_and_icon_slug_to_route_stops_table', 8);
 
 -- --------------------------------------------------------
 
@@ -544,6 +596,8 @@ CREATE TABLE `route_stops` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `order_index` int(11) NOT NULL,
   `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `icon_slug` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `x_coord` int(11) NOT NULL,
   `y_coord` int(11) NOT NULL,
   `is_stop` tinyint(1) NOT NULL DEFAULT 1,
@@ -558,18 +612,18 @@ CREATE TABLE `route_stops` (
 -- Дамп данных таблицы `route_stops`
 --
 
-INSERT INTO `route_stops` (`id`, `order_index`, `name`, `x_coord`, `y_coord`, `is_stop`, `level_number`, `route_segment`, `salary_days`, `created_at`, `updated_at`) VALUES
-(1, 0, 'Мурманск', 625, 462, 1, 1, 'murmansk_anadyr', 0, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
-(2, 1, 'Переход', 639, 441, 0, NULL, 'murmansk_anadyr', 0, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
-(3, 2, 'Териберка', 680, 466, 1, 2, 'murmansk_anadyr', 1, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
-(4, 3, 'Мыс Надежда', 751, 478, 1, 3, 'murmansk_anadyr', 1, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
-(5, 4, 'Остров Моржовский', 758, 534, 1, 4, 'murmansk_anadyr', 1, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
-(6, 5, 'Соловецкие острова', 664, 594, 1, 5, 'murmansk_anadyr', 2, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
-(7, 6, 'Переход', 631, 540, 0, NULL, 'murmansk_anadyr', 0, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
-(8, 7, 'Кандалакша', 615, 525, 1, 6, 'murmansk_anadyr', 1, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
-(9, 8, 'Переход', 631, 540, 0, NULL, 'murmansk_anadyr', 0, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
-(10, 9, 'Переход', 694, 576, 0, NULL, 'murmansk_anadyr', 0, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
-(11, 10, 'Архангельск', 738, 612, 1, 7, 'murmansk_anadyr', 2, '2026-01-26 13:16:53', '2026-01-26 13:16:53');
+INSERT INTO `route_stops` (`id`, `order_index`, `name`, `slug`, `icon_slug`, `x_coord`, `y_coord`, `is_stop`, `level_number`, `route_segment`, `salary_days`, `created_at`, `updated_at`) VALUES
+(1, 0, 'Мурманск', NULL, NULL, 625, 462, 1, 1, 'murmansk_anadyr', 0, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
+(2, 1, 'Переход', NULL, NULL, 639, 441, 0, NULL, 'murmansk_anadyr', 0, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
+(3, 2, 'Териберка', NULL, NULL, 680, 466, 1, 2, 'murmansk_anadyr', 1, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
+(4, 3, 'Канин мыс', NULL, NULL, 751, 478, 1, 3, 'murmansk_anadyr', 1, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
+(5, 4, 'Остров Моржовский', NULL, NULL, 758, 534, 1, 4, 'murmansk_anadyr', 1, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
+(6, 5, 'Соловецкие острова', NULL, NULL, 664, 594, 1, 5, 'murmansk_anadyr', 2, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
+(7, 6, 'Переход', NULL, NULL, 631, 540, 0, NULL, 'murmansk_anadyr', 0, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
+(8, 7, 'Кандалакша', NULL, NULL, 615, 525, 1, 6, 'murmansk_anadyr', 1, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
+(9, 8, 'Переход', NULL, NULL, 631, 540, 0, NULL, 'murmansk_anadyr', 0, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
+(10, 9, 'Переход', NULL, NULL, 694, 576, 0, NULL, 'murmansk_anadyr', 0, '2026-01-26 13:16:53', '2026-01-26 13:16:53'),
+(11, 10, 'Архангельск', NULL, NULL, 738, 612, 1, 7, 'murmansk_anadyr', 2, '2026-01-26 13:16:53', '2026-01-26 13:16:53');
 
 -- --------------------------------------------------------
 
@@ -639,6 +693,13 @@ CREATE TABLE `teriberika_mini_game_results` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `teriberika_mini_game_results`
+--
+
+INSERT INTO `teriberika_mini_game_results` (`id`, `game_progress_id`, `user_id`, `score`, `mollusks_collected`, `far_zone_collected`, `middle_zone_collected`, `near_zone_collected`, `crabs_clicked`, `time_played`, `has_seagull_bonus`, `is_completed`, `is_success`, `started_at`, `completed_at`, `created_at`, `updated_at`) VALUES
+(18, 3, 1, 1760, 69, 12, 27, 30, 2, 60, 0, 1, 1, '2026-04-19 11:21:16', '2026-04-19 11:22:17', '2026-04-19 11:21:16', '2026-04-19 11:22:17');
 
 -- --------------------------------------------------------
 
@@ -718,7 +779,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'toly', 'toly@toly.ru', NULL, '$2y$10$i7GxFmM.m3fVU8WJPuNIue69WL2Y.VnSyD6e54iu7Z3eSU0HLNGd2', NULL, '2026-01-13 17:49:18', '2026-01-13 17:49:18');
+(1, 'toly', 'toly@toly.ru', NULL, '$2y$10$i7GxFmM.m3fVU8WJPuNIue69WL2Y.VnSyD6e54iu7Z3eSU0HLNGd2', 'ZNg2AVrJ6tduJsmQXYQ5L1u8sZeqgrTxp6vv3rBtXSdRLaLHzlU41ciVfdgC', '2026-01-13 17:49:18', '2026-01-13 17:49:18');
 
 -- --------------------------------------------------------
 
@@ -757,7 +818,7 @@ CREATE TABLE `user_prize_points` (
 --
 
 INSERT INTO `user_prize_points` (`id`, `user_id`, `balance`, `last_spin_at`, `created_at`, `updated_at`) VALUES
-(1, 1, 775, '2026-02-18 16:08:20', '2026-01-13 17:59:30', '2026-02-18 16:08:20');
+(2, 1, 134, '2026-04-19 14:53:18', '2026-04-19 14:51:25', '2026-04-19 14:53:18');
 
 -- --------------------------------------------------------
 
@@ -834,7 +895,11 @@ INSERT INTO `visits` (`id`, `ip`, `visit_date`, `created_at`, `updated_at`) VALU
 (16, '127.0.0.1', '2026-02-08', '2026-02-08 13:11:28', '2026-02-08 13:11:28'),
 (17, '127.0.0.1', '2026-02-09', '2026-02-09 11:20:48', '2026-02-09 11:20:48'),
 (18, '127.0.0.1', '2026-02-10', '2026-02-10 07:31:58', '2026-02-10 07:31:58'),
-(19, '127.0.0.1', '2026-02-18', '2026-02-18 16:00:24', '2026-02-18 16:00:24');
+(19, '127.0.0.1', '2026-02-18', '2026-02-18 16:00:24', '2026-02-18 16:00:24'),
+(20, '127.0.0.1', '2026-04-18', '2026-04-18 11:01:14', '2026-04-18 11:01:14'),
+(21, '127.0.0.1', '2026-04-19', '2026-04-19 10:44:10', '2026-04-19 10:44:10'),
+(22, '127.0.0.1', '2026-04-20', '2026-04-20 14:44:53', '2026-04-20 14:44:53'),
+(23, '127.0.0.1', '2026-04-23', '2026-04-23 07:17:12', '2026-04-23 07:17:12');
 
 -- --------------------------------------------------------
 
@@ -964,6 +1029,14 @@ ALTER TABLE `job_offers`
   ADD KEY `job_offers_destination_stop_id_foreign` (`destination_stop_id`);
 
 --
+-- Индексы таблицы `kanin_cape_results`
+--
+ALTER TABLE `kanin_cape_results`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `kanin_cape_results_user_id_is_completed_index` (`user_id`,`is_completed`),
+  ADD KEY `kanin_cape_results_game_progress_id_stage_reached_index` (`game_progress_id`,`stage_reached`);
+
+--
 -- Индексы таблицы `mezon_domik`
 --
 ALTER TABLE `mezon_domik`
@@ -1001,7 +1074,8 @@ ALTER TABLE `personal_access_tokens`
 --
 ALTER TABLE `route_stops`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `route_stops_route_segment_order_index_unique` (`route_segment`,`order_index`);
+  ADD UNIQUE KEY `route_stops_route_segment_order_index_unique` (`route_segment`,`order_index`),
+  ADD UNIQUE KEY `route_stops_route_segment_slug_unique` (`route_segment`,`slug`);
 
 --
 -- Индексы таблицы `stop_tasks`
@@ -1149,7 +1223,7 @@ ALTER TABLE `game_equipment`
 -- AUTO_INCREMENT для таблицы `game_event_logs`
 --
 ALTER TABLE `game_event_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=134;
 
 --
 -- AUTO_INCREMENT для таблицы `game_jobs`
@@ -1170,6 +1244,12 @@ ALTER TABLE `job_offers`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT для таблицы `kanin_cape_results`
+--
+ALTER TABLE `kanin_cape_results`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT для таблицы `mezon_domik`
 --
 ALTER TABLE `mezon_domik`
@@ -1179,7 +1259,7 @@ ALTER TABLE `mezon_domik`
 -- AUTO_INCREMENT для таблицы `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT для таблицы `payments`
@@ -1197,7 +1277,7 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT для таблицы `route_stops`
 --
 ALTER TABLE `route_stops`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT для таблицы `stop_tasks`
@@ -1215,7 +1295,7 @@ ALTER TABLE `telegrams`
 -- AUTO_INCREMENT для таблицы `teriberika_mini_game_results`
 --
 ALTER TABLE `teriberika_mini_game_results`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT для таблицы `toy_characters`
@@ -1245,7 +1325,7 @@ ALTER TABLE `user_bonuses`
 -- AUTO_INCREMENT для таблицы `user_prize_points`
 --
 ALTER TABLE `user_prize_points`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `user_toys`
@@ -1263,7 +1343,7 @@ ALTER TABLE `visitors`
 -- AUTO_INCREMENT для таблицы `visits`
 --
 ALTER TABLE `visits`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT для таблицы `workers`
@@ -1328,6 +1408,13 @@ ALTER TABLE `game_progress`
 --
 ALTER TABLE `job_offers`
   ADD CONSTRAINT `job_offers_destination_stop_id_foreign` FOREIGN KEY (`destination_stop_id`) REFERENCES `route_stops` (`id`);
+
+--
+-- Ограничения внешнего ключа таблицы `kanin_cape_results`
+--
+ALTER TABLE `kanin_cape_results`
+  ADD CONSTRAINT `kanin_cape_results_game_progress_id_foreign` FOREIGN KEY (`game_progress_id`) REFERENCES `game_progress` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `kanin_cape_results_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `stop_tasks`
