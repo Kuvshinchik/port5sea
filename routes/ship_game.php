@@ -3,8 +3,8 @@
 use App\Http\Controllers\ShipGameController;
 use App\Http\Controllers\GameDebugController;
 use App\Http\Controllers\QrCodeController;
-use App\Http\Controllers\ShipGame\MiniGames\Stops\KaninCape\KaninCapeController;
-use App\Http\Controllers\ShipGame\MiniGames\Stops\Teriberka\TeriberkaMiniGameController;
+use App\Http\Controllers\Game\Stops\KaninCapeController;
+use App\Http\Controllers\ShipGame\MiniGames\TeriberkaMiniGameController;
 use Illuminate\Support\Facades\Route;
 
 /*
